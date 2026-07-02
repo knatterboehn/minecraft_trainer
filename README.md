@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.55** macht den Fabric-Prototyp build-näher: Yarn-Mappings statt falscher Mapping-Kombination, ein lokaler Version-Resolver für Minecraft Java `1.21.11` und ein sicherer Build-Runner.
+**Version 0.56** bereitet die öffentliche Mod-Veröffentlichung vor: Release-Metadaten, Installationsguide, Privacy Notes, Fair-Play-Policy, GitHub-Release-Checkliste sowie Modrinth-/CurseForge-Entwürfe.
 
 ## Produktprinzip
 
@@ -73,6 +73,38 @@ Vorhanden:
   - `player_death`
   - `session_tick`
 
+## Public Mod Release Preparation
+
+Release-Unterlagen für die spätere Veröffentlichung der Fabric-Mod sind vorbereitet:
+
+```text
+INSTALL_MOD.md
+PRIVACY.md
+FAIR_PLAY.md
+LICENSE
+docs/mod-release-metadata.json
+docs/modrinth.md
+docs/curseforge.md
+docs/github-release-checklist.md
+```
+
+Empfohlene Veröffentlichungsreihenfolge:
+
+```text
+1. GitHub Release Alpha
+2. Modrinth Draft / Alpha
+3. CurseForge Alpha
+```
+
+Noch nicht erledigt:
+
+```text
+Echten Fabric-JAR-Build ausführen
+JAR lokal in Minecraft Java 1.21.11 testen
+JAR als GitHub Release hochladen
+Modrinth/CurseForge manuell einreichen
+```
+
 ## Bridge starten
 
 ```zsh
@@ -95,7 +127,7 @@ Der Prototype liegt hier:
 fabric-mod/blockcoach-client/
 ```
 
-Wichtig: Der Java-Code nutzt Yarn-Namen wie `MinecraftClient`, `ClientTickEvents` und `ClientPlayConnectionEvents`. Deshalb verwendet `build.gradle` jetzt Yarn-Mappings. Fabric empfiehlt, Projektversionen für Minecraft, Mappings, Loader und Loom passend zur Zielversion zu setzen; der neue Resolver erledigt genau diesen Schritt lokal.
+Wichtig: Der Java-Code nutzt Yarn-Namen wie `MinecraftClient`, `ClientTickEvents` und `ClientPlayConnectionEvents`. Deshalb verwendet `build.gradle` Yarn-Mappings.
 
 Versionen lokal auflösen und schreiben:
 
@@ -116,6 +148,39 @@ npm run fabric:build
 ```
 
 Details: `docs/fabric-build-1.21.11.md`.
+
+## Mod installieren
+
+Für Alpha-Tester nach einem erfolgreichen Build:
+
+```text
+1. Minecraft Java 1.21.11 installieren
+2. Fabric Loader installieren
+3. Fabric API installieren, falls benötigt
+4. blockcoach-client-0.56.0+1.21.11.jar in den mods-Ordner legen
+5. npm run bridge starten
+6. BlockCoach Web-App öffnen
+7. Minecraft mit Fabric starten
+```
+
+Details: `INSTALL_MOD.md`.
+
+## Datenschutz und Fair Play
+
+Kurzfassung:
+
+- localhost-only
+- keine Cloud per Default
+- keine Account-Daten
+- kein Auto-Aim
+- kein Auto-Click
+- keine Gegner-Markierung
+- keine Gameplay-Automation
+
+Details:
+
+- `PRIVACY.md`
+- `FAIR_PLAY.md`
 
 ## Daten
 
@@ -164,6 +229,7 @@ npm run test:e2e
 npm run test:bridge
 npm run test:local-bridge
 npm run test:fabric
+npm run test:release-prep
 ```
 
 ## Fabric-spezifisch

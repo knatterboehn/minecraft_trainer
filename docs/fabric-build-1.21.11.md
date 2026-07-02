@@ -1,4 +1,4 @@
-# v0.55 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.56 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 
@@ -11,7 +11,7 @@ Minecraft Java 1.21.11
 → BlockCoach Web-App
 ```
 
-## Warum v0.55 wichtig ist
+## Warum v0.55 wichtig war
 
 v0.54 hatte einen versteckten Build-Risikopunkt: Der Java-Code war in Yarn-Namen geschrieben, aber `build.gradle` nutzte Mojang-Mappings. Das ist für den echten Build nicht sauber.
 
@@ -152,7 +152,7 @@ Er liest sichere Client-Zustände und sendet lokale Telemetrie an `127.0.0.1`.
 
 ## Nächster Schritt nach erfolgreichem Build
 
-v0.56 sollte erst dann serverabhängige Erkennung ergänzen:
+v0.57 kann serverabhängige Erkennung ergänzen:
 
 ```text
 chat_message + scoreboard_update

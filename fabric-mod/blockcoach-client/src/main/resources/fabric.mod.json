@@ -3,11 +3,14 @@
   "id": "blockcoach_client",
   "version": "${version}",
   "name": "BlockCoach Client",
-  "description": "Client-side telemetry prototype for BlockCoach. Sends safe gameplay events to the local BlockCoach bridge.",
-  "authors": ["BlockCoach"],
+  "description": "Client-side coaching telemetry prototype for BlockCoach. Sends safe gameplay events to the local BlockCoach bridge only.",
+  "authors": [
+    "BlockCoach"
+  ],
   "contact": {
     "homepage": "https://github.com/knatterboehn/minecraft_trainer",
-    "sources": "https://github.com/knatterboehn/minecraft_trainer"
+    "sources": "https://github.com/knatterboehn/minecraft_trainer",
+    "issues": "https://github.com/knatterboehn/minecraft_trainer/issues"
   },
   "license": "MIT",
   "environment": "client",
