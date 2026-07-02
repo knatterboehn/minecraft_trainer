@@ -59,3 +59,16 @@ Die App darf nur Live-Zustände zeigen, wenn echte Bridge-Events empfangen wurde
 - Keine Gegner-Markierung.
 - Keine Fake-Daten.
 - Keine neuen Modus-Menüs, die den Daily Loop verkomplizieren.
+
+## v0.53 Integration Flow
+
+```text
+Minecraft Java
+→ Fabric Client Prototype liest sichere Client-Signale
+→ Local Bridge nimmt HTTP Events an
+→ Web-App empfängt WebSocket Events
+→ aktive Quest übernimmt nur sichere GameEvents
+→ Gamification bleibt der Abschlussmoment
+```
+
+Die Live-Integration ist bewusst assistiv: Der Spieler bekommt nach und rund um Fights besseres Feedback, aber keinen unfairen Vorteil im Fight.

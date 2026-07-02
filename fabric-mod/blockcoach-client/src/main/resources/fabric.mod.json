@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "blockcoach_client",
+  "version": "${version}",
+  "name": "BlockCoach Client",
+  "description": "Client-side telemetry prototype for BlockCoach. Sends safe gameplay events to the local BlockCoach bridge.",
+  "authors": ["BlockCoach"],
+  "contact": {
+    "homepage": "https://github.com/knatterboehn/minecraft_trainer",
+    "sources": "https://github.com/knatterboehn/minecraft_trainer"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "dev.blockcoach.client.BlockCoachClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

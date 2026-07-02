@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.52** führt das Rebranding und die Live Integration Foundation ein. Die App bleibt vollständig nutzbar im manuellen Modus und zeigt Live-Daten nur an, wenn echte Bridge-Events empfangen werden.
+**Version 0.53** ergänzt die erste echte lokale Integrationskette: Web-App → Local Bridge → Fabric Client Prototype.
 
 ## Produktprinzip
 
@@ -13,7 +13,8 @@ BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks
 - Keine Fake-Live-Daten.
 - Kein zusätzlicher localStorage-Key.
 - Manuelle Eingabe bleibt Backup.
-- Live-Events laufen später durch dieselbe Trainingslogik wie manuelle Events.
+- Live-Events laufen durch dieselbe Trainingslogik wie manuelle Events.
+- Der Coach liest und analysiert nur. Er automatisiert kein Gameplay.
 
 ## Branding
 
@@ -44,28 +45,57 @@ Daily Quest sehen
 → XP, Streak und Quest-Verlauf sehen
 ```
 
-## Live Integration Foundation
+## Live Integration v0.53
 
 Zielarchitektur:
 
 ```text
 Minecraft Java Edition
-→ Fabric Client Mod
-→ Local Bridge ws://localhost:4317/events
+→ Fabric Client Mod Prototype
+→ Local Bridge http://127.0.0.1:4317/events
+→ WebSocket ws://localhost:4317/events
 → BlockCoach Web-App
 → GameEvents + Gamification
 ```
 
-Die App unterstützt jetzt:
+Neu in v0.53:
 
-- Live-Status: nicht verbunden, checking, bridge erkannt, Minecraft verbunden, Server erkannt, error
-- Bridge-Inbox im Profil
-- WebSocket-Prüfung über `ws://localhost:4317/events`
-- Browser-Eingang über `window.BlockCoachBridge.receive(...)`
-- Custom Event Eingang über `blockcoach:bridge-event`
-- Mapping von sicheren Bridge-Events auf interne GameEvents, wenn eine Quest aktiv ist
+- `tools/local-bridge/server.mjs`
+- `tools/local-bridge/emit.mjs`
+- `fabric-mod/blockcoach-client/`
+- Local Bridge mit HTTP Health, HTTP POST und WebSocket-Broadcast
+- Fabric-Client-Prototyp für sichere Client-Events:
+  - `minecraft_connected`
+  - `server_joined`
+  - `health_changed`
+  - `hotbar_changed`
+  - `item_used`
+  - `player_death`
+  - `session_tick`
 
-Details: `docs/minecraft-bridge-contract.md`
+## Bridge starten
+
+```zsh
+npm run bridge
+```
+
+Test-Event senden:
+
+```zsh
+npm run bridge:emit -- --server PvPClub
+npm run bridge:emit -- --win
+npm run bridge:emit -- --loss
+```
+
+## Fabric Prototype
+
+Der Prototype liegt hier:
+
+```text
+fabric-mod/blockcoach-client/
+```
+
+Wichtig: `gradle.properties` nutzt aktuell eine Fabric-Beispielkonfiguration für Minecraft `1.21`. Vor einem echten Build muss die exakte Minecraft-Version von Vince eingetragen werden.
 
 ## Daten
 
@@ -97,6 +127,10 @@ src/
   domain/
   integrations/
   ui/
+tools/
+  local-bridge/
+fabric-mod/
+  blockcoach-client/
 scripts/
 docs/
 ```
@@ -108,6 +142,8 @@ npm run check
 npm test
 npm run test:e2e
 npm run test:bridge
+npm run test:local-bridge
+npm run test:fabric
 ```
 
 ## Testabdeckung
@@ -115,6 +151,8 @@ npm run test:bridge
 - Syntax-Check aller JS-Dateien
 - Smoke- und Regression-Tests
 - Bridge-Integration-Test
+- Local-Bridge-Test mit echtem WebSocket
+- Fabric-Prototyp-Strukturtest
 - Browser-E2E mit echten Klicks
 
-Siehe `docs/test-report-v052.md`.
+Siehe `docs/test-report-v053.md`.

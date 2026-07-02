@@ -5,15 +5,47 @@
 
 ## Purpose
 
-The web app cannot read Minecraft directly. The Fabric mod or local bridge sends real gameplay events to BlockCoach. The app must never pretend to be live-connected without receiving bridge events.
+The web app cannot read Minecraft directly. The Fabric mod sends safe client-side gameplay events to a local bridge. The bridge forwards them to the web app. The app must never pretend to be live-connected without receiving bridge events.
 
-## Local endpoint
+## Architecture
 
-Default WebSocket endpoint:
+```text
+Minecraft Java Edition
+→ Fabric Client Mod Prototype
+→ HTTP POST http://127.0.0.1:4317/events
+→ Local Bridge
+→ WebSocket ws://localhost:4317/events
+→ BlockCoach Web-App
+```
+
+## Local endpoints
+
+### Bridge health
+
+```text
+GET http://127.0.0.1:4317/health
+```
+
+### Mod-to-bridge event input
+
+```text
+POST http://127.0.0.1:4317/events
+Content-Type: application/json
+```
+
+### Browser WebSocket endpoint
 
 ```text
 ws://localhost:4317/events
 ```
+
+### Recent event debug endpoint
+
+```text
+GET http://127.0.0.1:4317/events/recent
+```
+
+## Browser dev API
 
 The web app also exposes a browser-side test/dev API once loaded:
 
@@ -23,15 +55,13 @@ window.BlockCoachBridge.status('server_detected', { server: 'PvPClub' })
 window.dispatchEvent(new CustomEvent('blockcoach:bridge-event', { detail: { type: 'fight_result', result: 'win' } }))
 ```
 
-This API is an input channel for a real bridge or automated tests. It does not create fake live data by itself.
+This API is an input channel for local tests. It does not create fake live data by itself.
 
 ## Status events
 
 ```json
-{ "type": "bridge_status", "status": "not_connected" }
-{ "type": "bridge_status", "status": "checking" }
 { "type": "bridge_status", "status": "bridge_detected" }
-{ "type": "minecraft_connected", "playerName": "Vince", "minecraftVersion": "1.21.1" }
+{ "type": "minecraft_connected", "playerName": "Vince", "minecraftVersion": "1.21" }
 { "type": "server_joined", "server": "PvPClub" }
 ```
 
@@ -61,7 +91,7 @@ Only mapped into the active Daily Quest when a quest is running.
 Mapped as a loss only when a quest is active.
 
 ```json
-{ "type": "player_death", "cause": "player", "opponent": "EnemyName" }
+{ "type": "player_death", "cause": "client_health_zero", "health": 0 }
 ```
 
 ### Bonus Challenge progress
@@ -70,7 +100,7 @@ Mapped as a loss only when a quest is active.
 { "type": "challenge_success", "label": "Clean reset" }
 ```
 
-### Optional coaching signals
+### Coaching signals
 
 These are stored in the live inbox first. Later versions can derive skill insights from them.
 
@@ -93,4 +123,4 @@ Bridge events are not automatically trusted as completed quests.
 
 ## Anti-cheat boundary
 
-BlockCoach reads and analyzes. It must not aim, click, fight, mark enemies, or automate gameplay.
+BlockCoach reads and analyzes. It must not aim, click, fight, mark enemies, automate camera movement, or automate gameplay.
