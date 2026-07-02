@@ -75,6 +75,11 @@ export function applyGameEvent(app, event) {
     return app;
   }
 
+  if (event.type === EVENT_TYPES.QUEST_FINISHED && !app.todayTraining.activeSession) {
+    app.ui.lastSummaryId = null;
+    return app;
+  }
+
   const session = ensureSession(app);
 
   if (event.type === EVENT_TYPES.FIGHT_WIN || event.type === EVENT_TYPES.FIGHT_LOSS || event.type === EVENT_TYPES.FIGHT_TRAINING) {
@@ -114,6 +119,7 @@ export function applyGameEvent(app, event) {
     recalcSession(session);
     if (session.fights <= 0) {
       app.ui.lastSummaryId = null;
+      app.todayTraining.activeSession = null;
       return app;
     }
     const alreadyCompletedToday = app.history.some((entry) => entry.date === session.date);

@@ -2,7 +2,7 @@
 
 Vanilla-HTML/CSS/JS-App als Minecraft Training Companion.
 
-**Version 0.49** ergänzt den Quest-Completion- und Gamification-Loop auf Basis des originalen Premium-Gaming-UI.
+**Version 0.51** ergänzt einen echten automatisierten Browser-E2E-Test mit simuliertem Klickverhalten: Onboarding, Daily Quest, Fight Log, Bonus Challenge, Abschluss, Fortschritt, Analyse, Profil und Mobile-Navigation.
 
 ## Produktprinzip
 
@@ -75,4 +75,13 @@ scripts/
 ```bash
 npm run check
 npm test
+npm run test:e2e
 ```
+
+## Testabdeckung
+
+- `npm run check`: Syntax-Check aller JS-Dateien
+- `npm test`: Smoke + Regression + Browser-E2E
+- `npm run test:e2e`: simulierter Nutzerfluss mit echten Browser-Klicks
+
+Siehe `docs/test-report-v051.md`.

@@ -26,6 +26,8 @@ function normalizeSession(entry) {
   const wins = Math.max(0, Number(entry.wins || 0));
   const losses = Math.max(0, Number(entry.losses || 0));
   const trainingFights = Math.max(0, Number(entry.trainingFights || Math.max(0, fights - wins - losses)));
+  const challengeTarget = Math.max(1, Math.min(20, Number(entry.challengeTarget || 1)));
+  const challengeProgress = Math.max(0, Math.min(challengeTarget, Number(entry.challengeProgress || 0)));
 
   return {
     id: safeString(entry.id, `session-${date}-${Math.random().toString(16).slice(2)}`),
@@ -36,9 +38,9 @@ function normalizeSession(entry) {
     focus: safeString(entry.focus, ''),
     targetFights: Math.max(1, Math.min(20, Number(entry.targetFights || fights || 5))),
     challengeLabel: safeString(entry.challengeLabel, 'Bonus Challenge'),
-    challengeTarget: Math.max(1, Math.min(20, Number(entry.challengeTarget || 1))),
-    challengeProgress: Math.max(0, Number(entry.challengeProgress || 0)),
-    challengeDone: Boolean(entry.challengeDone),
+    challengeTarget,
+    challengeProgress,
+    challengeDone: Boolean(entry.challengeDone) || challengeProgress >= challengeTarget,
     fightEvents: Array.isArray(entry.fightEvents) ? entry.fightEvents : [],
     fights: wins + losses + trainingFights || fights,
     wins,
@@ -51,6 +53,52 @@ function normalizeSession(entry) {
     streakBonus: Boolean(entry.streakBonus),
     xpBreakdown: entry.xpBreakdown || null,
     xp: Math.max(0, Number(entry.xp || entry.xpBreakdown?.total || 0))
+  };
+}
+
+
+function normalizeActiveSession(entry, quest, today) {
+  if (!entry || typeof entry !== 'object') return null;
+  const date = validDate(entry.date) ? entry.date : today;
+  if (date !== today) return null;
+
+  const fightEvents = Array.isArray(entry.fightEvents)
+    ? entry.fightEvents
+        .filter((fight) => fight && ['win', 'loss', 'training'].includes(fight.result))
+        .map((fight, index) => ({
+          id: safeString(fight.id, `fight-${date}-${index}`),
+          result: fight.result,
+          createdAt: safeString(fight.createdAt, '')
+        }))
+    : [];
+
+  const wins = fightEvents.filter((fight) => fight.result === 'win').length;
+  const losses = fightEvents.filter((fight) => fight.result === 'loss').length;
+  const trainingFights = fightEvents.filter((fight) => fight.result === 'training').length;
+  const challengeTarget = Math.max(1, Math.min(20, Number(entry.challengeTarget || quest.challenge.target || 1)));
+  const challengeProgress = Math.max(0, Math.min(challengeTarget, Number(entry.challengeProgress || 0)));
+
+  return {
+    id: safeString(entry.id, `session-${date}`),
+    date,
+    questId: safeString(entry.questId, quest.id),
+    skill: safeString(entry.skill, quest.skill),
+    server: safeString(entry.server, quest.server),
+    focus: safeString(entry.focus, quest.focus),
+    targetFights: Math.max(1, Math.min(20, Number(entry.targetFights || quest.targetFights || 5))),
+    challengeLabel: safeString(entry.challengeLabel, quest.challenge.label),
+    challengeTarget,
+    challengeProgress,
+    challengeDone: Boolean(entry.challengeDone) || challengeProgress >= challengeTarget,
+    fightEvents,
+    fights: wins + losses + trainingFights,
+    wins,
+    losses,
+    trainingFights,
+    mainIssue: safeString(entry.mainIssue, 'Weiß nicht'),
+    notes: safeString(entry.notes, '').slice(0, 500),
+    startedAt: safeString(entry.startedAt, ''),
+    completedAt: null
   };
 }
 
@@ -82,10 +130,12 @@ export function normalizeApp(raw) {
     dataMode: source.settings?.dataMode === 'bridge' ? 'bridge' : 'manual'
   };
 
+  const today = todayISO();
+  const quest = createDailyQuest(base.user);
   base.todayTraining = {
-    date: todayISO(),
-    quest: createDailyQuest(base.user),
-    activeSession: source.todayTraining?.activeSession || null
+    date: today,
+    quest,
+    activeSession: normalizeActiveSession(source.todayTraining?.activeSession, quest, today)
   };
 
   base.history = Array.isArray(source.history) ? source.history.map(normalizeSession).filter(Boolean) : [];
