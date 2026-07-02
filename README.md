@@ -1,12 +1,19 @@
 # Minecraft Trainer
 
-Eine einfache Vanilla-HTML/CSS/JS-App als Minecraft Training Companion.
+Eine Vanilla-HTML/CSS/JS-App als Minecraft Training Companion.
 
-Version 0.45 stellt die modulare Struktur wieder visuell auf Premium-Gaming-UI um: Dark UI, Quest-Hero, Pixel-Art-Visuals und klare Spielerlogik ohne zur Monster-index.html zurückzugehen.
+Version 0.46 fokussiert die UX wieder auf wenige klare Konzepte:
+
+1. **Daily Quest** - was heute gespielt wird
+2. **Fight Log** - was im Spiel passiert ist
+3. **Bonus Challenge** - was Extra-XP bringt
+4. **Progress** - was der Spieler erreicht hat
+
+Keine doppelten Systeme, keine Fake-Live-Daten, keine Monster-`index.html`.
 
 ## Ziel
 
-Die App arbeitet ab jetzt mit einer klaren Event-Architektur:
+Die App arbeitet mit einer Event-Architektur:
 
 - Heute: manuelle Eingabe über Buttons
 - Später: echte Minecraft-Daten über eine Bridge / Mod-Integration
@@ -35,6 +42,15 @@ Die App nutzt genau einen localStorage-Key:
 `minecraftTrainerApp`
 
 Darin liegt das komplette App-Objekt inklusive History und GameEvents.
+
+## UX-Regeln
+
+- Spielerlogik vor Dashboard-Logik.
+- Wenige klare Konzepte statt paralleler Begriffe.
+- Ein 10- bis 18-jähriger Spieler soll in unter 5 Sekunden wissen, was zu tun ist.
+- Nicht viel tippen: häufige Aktionen sind große Buttons.
+- Die App sagt nur Dinge, die aus Daten ableitbar sind.
+- Minecraft-Integration wird nicht vorgetäuscht.
 
 ## Struktur
 
@@ -73,6 +89,8 @@ src/
       emptyState.js
       questCard.js
       statCard.js
+scripts/
+  smoke-test.mjs
 ```
 
 ## Keine Fake-Live-Daten
