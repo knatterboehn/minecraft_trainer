@@ -13,7 +13,7 @@ function renderHistoryItem(entry) {
         <div class="history-meta">
           <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
           <span class="tag">${escapeHtml(entry.mainIssue || 'Weiß nicht')}</span>
-          ${entry.notes ? `<span class="tag">${escapeHtml(entry.notes)}</span>` : ''}
+          ${entry.notes ? `<span class="tag note-tag">${escapeHtml(entry.notes)}</span>` : ''}
         </div>
       </div>
       <span class="tag">${escapeHtml(entry.date)}</span>
@@ -29,10 +29,10 @@ export function renderProgress(state) {
   return `
     <main class="app-shell">
       <div class="screen">
-        <section class="card">
-          <p class="eyebrow">Progress</p>
-          <h2>Was ist passiert?</h2>
-          <p>Zahlen und Verlauf. Keine erfundenen Skill-Werte.</p>
+        <section class="card page-intro">
+          <p class="eyebrow">Fortschritt</p>
+          <h2>Was hast du erreicht?</h2>
+          <p>XP, Fights und Quest-Verlauf. Keine erfundenen Skill-Werte.</p>
         </section>
 
         <section class="grid grid-4">
@@ -44,11 +44,12 @@ export function renderProgress(state) {
 
         <section class="card stack">
           <div>
-            <p class="eyebrow">History</p>
-            <h3>Gespeicherte Quests</h3>
+            <p class="eyebrow">Quest-Verlauf</p>
+            <h3>Gespeicherte Daily Quests</h3>
+            <p>Jeder Eintrag kommt aus einer abgeschlossenen Quest.</p>
           </div>
           <div class="history-list">
-            ${history.length ? history.map(renderHistoryItem).join('') : emptyState('Noch keine History', 'Schließe deine erste Daily Quest ab, dann erscheint sie hier.')}
+            ${history.length ? history.map(renderHistoryItem).join('') : emptyState('Noch keine Quests', 'Schließe deine erste Daily Quest ab, dann erscheint sie hier.')}
           </div>
         </section>
       </div>

@@ -16,10 +16,10 @@ const screens = {
 };
 
 const nav = [
-  { id: 'dashboard', label: 'Dashboard' },
-  { id: 'training', label: 'Training' },
+  { id: 'dashboard', label: 'Heute' },
+  { id: 'training', label: 'Quest' },
   { id: 'progress', label: 'Fortschritt' },
-  { id: 'analysis', label: 'Analyse' },
+  { id: 'analysis', label: 'Fokus' },
   { id: 'profile', label: 'Profil' }
 ];
 

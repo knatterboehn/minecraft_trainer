@@ -9,7 +9,7 @@ export function renderProfile(state) {
   return `
     <main class="app-shell">
       <div class="screen">
-        <section class="card">
+        <section class="card page-intro">
           <p class="eyebrow">Profil</p>
           <h2>Daten & Sicherheit</h2>
           <p>Alles bleibt lokal in einem Storage-Key: <strong>${escapeHtml(STORAGE_KEY)}</strong>.</p>
@@ -56,7 +56,7 @@ export function renderProfile(state) {
               <input id="importFile" class="sr-only" data-input="import" type="file" accept="application/json" />
             </div>
           </div>
-          <div class="card stack">
+          <div class="card stack danger-zone">
             <div>
               <p class="eyebrow">Reset</p>
               <h3>Gefährlicher Bereich</h3>

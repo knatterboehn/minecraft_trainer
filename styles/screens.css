@@ -81,55 +81,37 @@
   line-height: 1.72;
 }
 
-.hero-art {
+ .hero-art {
   position: absolute;
   right: 18px;
-  bottom: 8px;
-  width: 168px;
-  height: 168px;
+  bottom: -2px;
+  width: clamp(130px, 18vw, 190px);
+  aspect-ratio: 1;
   z-index: 2;
   pointer-events: none;
   filter: drop-shadow(0 18px 34px rgba(0,0,0,0.34));
 }
 
-.pixel-character,
-.pixel-character::before,
-.pixel-character::after {
-  position: absolute;
-  content: "";
+.hero-art img,
+.quest-art,
+.status-art,
+.card-art {
   display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.pixel-character {
-  left: 40px;
-  top: 12px;
-  width: 74px;
-  height: 120px;
-  background:
-    linear-gradient(var(--accent), var(--accent)) 20px 0 / 34px 34px no-repeat,
-    linear-gradient(#1d3422, #1d3422) 16px 38px / 42px 42px no-repeat,
-    linear-gradient(var(--accent-2), var(--accent-2)) 8px 80px / 24px 36px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 42px 80px / 24px 36px no-repeat;
-}
-.pixel-character::before {
-  left: -22px;
-  top: 42px;
-  width: 22px;
-  height: 58px;
-  background: linear-gradient(180deg, var(--accent-2), var(--accent));
-  transform: rotate(14deg);
-  border-radius: 4px;
-}
-.pixel-character::after {
-  right: -32px;
-  top: 30px;
-  width: 20px;
-  height: 88px;
-  background:
-    linear-gradient(#cfd8d0, #cfd8d0) 0 0 / 20px 58px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 3px 56px / 14px 32px no-repeat;
-  transform: rotate(38deg);
-  border-radius: 3px;
+.hero-art::before {
+  content: "";
+  position: absolute;
+  inset: 24% 8% 4%;
+  z-index: -1;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(var(--accent-rgb),0.20), transparent 70%);
+  filter: blur(12px);
 }
 
 .quest-grid {
@@ -231,128 +213,71 @@
   opacity: 0.82;
 }
 
-.hero-mob,
-.hero-rival,
-.hero-crystal,
-.hero-ghast {
+.quest-art {
   position: absolute;
   pointer-events: none;
   user-select: none;
-  filter: drop-shadow(0 30px 36px rgba(0,0,0,0.52));
+  filter: drop-shadow(0 28px 34px rgba(0,0,0,0.44));
 }
 
-.hero-mob {
-  left: 16%;
-  bottom: -16px;
-  width: 126px;
-  height: 194px;
+.quest-art-main {
+  left: 5%;
+  bottom: -2%;
+  width: min(58%, 220px);
+  height: auto;
+  z-index: 4;
+  transform: rotate(-4deg);
+}
+
+.quest-art-rival {
+  right: -11%;
+  bottom: -4%;
+  width: min(48%, 178px);
+  height: auto;
   z-index: 3;
-  transform: rotate(-5deg);
-}
-.hero-mob::before {
-  content: "";
-  position: absolute;
-  left: 31px;
-  top: 0;
-  width: 58px;
-  height: 58px;
-  background:
-    linear-gradient(#e6eadf, #e6eadf) 0 0 / 100% 100%,
-    linear-gradient(#0d160f, #0d160f) 13px 19px / 8px 8px no-repeat,
-    linear-gradient(#0d160f, #0d160f) 37px 19px / 8px 8px no-repeat;
-  border-radius: 6px;
-  box-shadow: inset 0 -12px 0 rgba(var(--accent-rgb),0.08);
-}
-.hero-mob::after {
-  content: "";
-  position: absolute;
-  left: 20px;
-  top: 60px;
-  width: 82px;
-  height: 120px;
-  background:
-    linear-gradient(#25352a, #25352a) 16px 0 / 50px 48px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 0 48px / 32px 58px no-repeat,
-    linear-gradient(var(--accent-2), var(--accent-2)) 50px 48px / 32px 58px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) 14px 104px / 22px 32px no-repeat,
-    linear-gradient(var(--accent-2), var(--accent-2)) 46px 104px / 22px 32px no-repeat;
-  border-radius: 4px;
+  opacity: 0.88;
+  transform: rotate(7deg);
 }
 
-.hero-rival {
-  right: 5%;
-  bottom: 10px;
-  width: 100px;
-  height: 150px;
+.quest-art-bonus {
+  right: 25%;
+  top: 2%;
+  width: min(38%, 142px);
+  height: auto;
   z-index: 2;
-  opacity: 0.92;
-  transform: rotate(6deg) scaleX(-1);
-}
-.hero-rival::before {
-  content: "";
-  position: absolute;
-  left: 26px;
-  top: 0;
-  width: 48px;
-  height: 48px;
-  background: #c7d0bd;
-  border-radius: 5px;
-}
-.hero-rival::after {
-  content: "";
-  position: absolute;
-  left: 18px;
-  top: 52px;
-  width: 64px;
-  height: 96px;
-  background:
-    linear-gradient(#2a3034, #2a3034) 14px 0 / 36px 38px no-repeat,
-    linear-gradient(#868ea6, #868ea6) 0 38px / 26px 50px no-repeat,
-    linear-gradient(#535d73, #535d73) 38px 38px / 26px 50px no-repeat,
-    linear-gradient(#c5c8d9, #c5c8d9) 18px 84px / 18px 28px no-repeat,
-    linear-gradient(#868ea6, #868ea6) 38px 84px / 18px 28px no-repeat;
+  opacity: 0.74;
+  transform: rotate(5deg);
 }
 
-.hero-crystal {
-  right: 42%;
-  top: 22px;
-  width: 56px;
-  height: 56px;
-  opacity: 0.78;
-  transform: rotate(12deg);
-  background:
-    linear-gradient(135deg, var(--accent-2), var(--accent)) center / 36px 36px no-repeat;
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-}
-.hero-ghast {
-  right: 24%;
-  top: 52px;
-  width: 64px;
-  height: 64px;
-  opacity: 0.42;
-  background: rgba(255,255,255,0.64);
-  border-radius: 10px;
-}
-.hero-ghast::before {
-  content: "";
-  position: absolute;
-  left: 14px;
-  top: 23px;
-  width: 8px;
-  height: 8px;
-  background: #1a1a1a;
-  box-shadow: 26px 0 0 #1a1a1a, 13px 16px 0 rgba(var(--accent-rgb),0.55);
+.quest-art-ghast {
+  right: 4%;
+  top: 8%;
+  width: min(34%, 116px);
+  height: auto;
+  z-index: 2;
+  opacity: 0.44;
+  transform: rotate(-8deg);
 }
 
 .integration-status {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 76px;
+  align-items: center;
+  gap: 12px;
   padding: 18px;
   border-radius: 16px;
   background:
     linear-gradient(120deg, rgba(var(--accent-rgb),0.105), rgba(255,255,255,0.026)),
     rgba(0,0,0,0.10);
   border: 1px solid rgba(255,255,255,0.10);
+}
+
+.status-art {
+  width: 76px;
+  height: 76px;
+  justify-self: end;
+  opacity: 0.92;
+  filter: drop-shadow(0 18px 24px rgba(0,0,0,0.34));
 }
 
 .fight-log {
@@ -437,11 +362,13 @@
   }
   .quest-title { max-width: 11ch; font-size: clamp(2.35rem, 12vw, 3.55rem); }
   .quest-visual { min-height: 168px; border-radius: 16px; }
-  .hero-mob { left: 10%; bottom: -34px; transform: scale(0.78) rotate(-5deg); transform-origin: bottom left; }
-  .hero-rival { right: -3%; bottom: -12px; transform: scale(0.76) rotate(6deg) scaleX(-1); transform-origin: bottom right; opacity: 0.82; }
-  .hero-crystal { right: 42%; top: 18px; width: 42px; height: 42px; }
-  .hero-ghast { width: 48px; height: 48px; right: 22%; top: 42px; }
+  .quest-art-main { width: 158px; left: 8%; bottom: -8%; }
+  .quest-art-rival { width: 120px; right: -6%; bottom: -8%; }
+  .quest-art-bonus { width: 96px; right: 35%; top: -2%; }
+  .quest-art-ghast { width: 82px; right: 9%; top: 8%; }
 
+  .integration-status { grid-template-columns: minmax(0, 1fr) 62px; }
+  .status-art { width: 62px; height: 62px; }
   .fight-log { grid-template-columns: 1fr; }
   .fight-actions { grid-template-columns: 1fr 1fr; }
   .issue-grid { grid-template-columns: 1fr 1fr; }

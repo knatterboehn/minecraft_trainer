@@ -2,7 +2,7 @@
 
 Eine Vanilla-HTML/CSS/JS-App als Minecraft Training Companion.
 
-Version 0.46 fokussiert die UX wieder auf wenige klare Konzepte:
+Version 0.47 nutzt wieder echte SVG-Assets und hält die UX auf wenige klare Konzepte fokussiert:
 
 1. **Daily Quest** - was heute gespielt wird
 2. **Fight Log** - was im Spiel passiert ist
@@ -56,6 +56,12 @@ Darin liegt das komplette App-Objekt inklusive History und GameEvents.
 
 ```text
 index.html
+assets/
+  player-wave.svg
+  creeper-angry.svg
+  player-diamonds.svg
+  ghast-fire.svg
+  ...
 styles/
   tokens.css
   base.css

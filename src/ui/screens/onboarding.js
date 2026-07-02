@@ -12,8 +12,8 @@ export function renderOnboarding(state) {
         <div class="hero">
           <p class="eyebrow">Minecraft Trainer</p>
           <h1>Trainiere wie eine Quest.</h1>
-          <p>Daily Quest bekommen, Fights spielen, Fortschritt sehen. Später vorbereitet für echte Minecraft-Daten.</p>
-          <div class="hero-art" aria-hidden="true"><span class="pixel-character"></span></div>
+          <p>Daily Quest bekommen, Fights spielen, Bonus schaffen, Fortschritt sehen. Später vorbereitet für echte Minecraft-Daten.</p>
+          <div class="hero-art" aria-hidden="true"><img src="./assets/player-platform.svg" alt="" loading="lazy" /></div>
         </div>
         <form class="card stack" data-form="onboarding">
           <div>

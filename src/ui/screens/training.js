@@ -21,7 +21,7 @@ function renderSummary(state) {
     : 'Nächste Quest mit einem klaren Fokus spielen.';
 
   return `
-    <section class="card stack">
+    <section class="card result-card stack">
       <div>
         <p class="eyebrow">Quest abgeschlossen</p>
         <h2>+${escapeHtml(entry.xp)} XP</h2>
@@ -29,15 +29,32 @@ function renderSummary(state) {
       </div>
       <div class="row">
         <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
-        <span class="tag">${escapeHtml(`Problem: ${entry.mainIssue || 'Weiß nicht'}`)}</span>
+        <span class="tag">${escapeHtml(`Fokus: ${entry.mainIssue || 'Weiß nicht'}`)}</span>
       </div>
-      <div class="card compact">
+      <div class="card compact quiet-card">
         <p class="eyebrow">Nächster Fokus</p>
         <h3>${escapeHtml(focus)}</h3>
       </div>
       <div class="row">
         <button class="btn primary" data-action="clear-summary" data-screen="dashboard">Zur Daily Quest</button>
         <button class="btn" data-screen="progress">Fortschritt ansehen</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderHowToPlay(quest) {
+  return `
+    <section class="card stack">
+      <div>
+        <p class="eyebrow">Quest-Flow</p>
+        <h3>So nutzt du die App neben Minecraft</h3>
+        <p>Die App misst nicht die Zeit, sondern deine Fights und deinen Bonus-Fortschritt.</p>
+      </div>
+      <div class="flow-grid">
+        <article class="flow-step"><span>1</span><div><strong>Minecraft spielen</strong><p>${escapeHtml(`${quest.targetFights} Fights auf ${quest.server}`)}</p></div></article>
+        <article class="flow-step"><span>2</span><div><strong>Fight loggen</strong><p>Nach jedem Fight genau ein Klick.</p></div></article>
+        <article class="flow-step"><span>3</span><div><strong>Bonus tracken</strong><p>${escapeHtml(`${quest.challenge.target} Erfolge für Bonus-XP`)}</p></div></article>
       </div>
     </section>
   `;
@@ -54,24 +71,25 @@ export function renderTraining(state) {
   if (!session) {
     return `
       <main class="app-shell">
-        <div class="screen">
-          <section class="card stack">
+        <div class="screen training-screen">
+          <section class="card quest-start-card stack">
             <div>
               <p class="eyebrow">Daily Quest</p>
               <h2>${escapeHtml(quest.title)}</h2>
               <p>${escapeHtml(`Server: ${quest.server}. Fokus: ${quest.focus}`)}</p>
             </div>
-            <div class="card compact">
+            <div class="card compact quest-challenge">
               <p class="eyebrow">Bonus Challenge</p>
               <h3>${escapeHtml(quest.challenge.label)}</h3>
               <p>${escapeHtml(`Ziel: ${quest.challenge.target} Erfolge`)}</p>
             </div>
-            <div class="row">
+            <div class="quest-hints">
               ${quest.hints.map((hint) => `<span class="tag">${escapeHtml(hint)}</span>`).join('')}
             </div>
             <button class="btn primary" data-action="start-quest">Quest starten</button>
           </section>
-          ${emptyState('Noch keine aktive Quest', 'Starte die Quest, spiele Minecraft und logge nach jedem Fight kurz das Ergebnis.')}
+          ${renderHowToPlay(quest)}
+          ${emptyState('Noch nicht gestartet', 'Starte die Quest erst, wenn du Minecraft offen hast und die Fights wirklich spielen willst.')}
         </div>
       </main>
     `;
@@ -83,17 +101,17 @@ export function renderTraining(state) {
 
   return `
     <main class="app-shell">
-      <div class="screen">
-        <section class="card stack">
+      <div class="screen training-screen">
+        <section class="card quest-status-card stack">
           <div class="between">
             <div>
-              <p class="eyebrow">Aktive Daily Quest</p>
+              <p class="eyebrow">Daily Quest läuft</p>
               <h2>${escapeHtml(session.targetFights)} ${escapeHtml(session.skill)}-Fights</h2>
               <p>${escapeHtml(session.focus)}</p>
             </div>
             <span class="tag warn">Manueller Modus</span>
           </div>
-          <div class="progress-track"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
+          <div class="progress-track" aria-label="Fight-Fortschritt"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
           <div class="row">
             <span class="tag accent">${escapeHtml(`${session.fights} / ${session.targetFights} Fights`)}</span>
             <span class="tag">${escapeHtml(session.server)}</span>
@@ -101,47 +119,49 @@ export function renderTraining(state) {
           </div>
         </section>
 
-        <section class="grid grid-3 fight-log">
-          ${statCard('Wins', session.wins, '+30 XP je Win')}
-          ${statCard('Losses', session.losses, '+10 XP je Loss')}
-          ${statCard('Training', session.trainingFights, 'ohne Winrate')}
-        </section>
-
-        <section class="card stack">
-          <div>
-            <p class="eyebrow">Fight Log</p>
-            <h3>Nach jedem Fight ein Klick.</h3>
-            <p>Nicht viel tippen. Nur erfassen, was wirklich passiert ist.</p>
+        <section class="card fight-log-card stack">
+          <div class="between">
+            <div>
+              <p class="eyebrow">Fight Log</p>
+              <h3>Nach jedem Fight ein Klick</h3>
+              <p>Schnell eintragen, nicht aus dem Spiel-Flow fallen.</p>
+            </div>
+            <span class="tag accent">${escapeHtml(`${session.fights} Fights`)}</span>
           </div>
+          <section class="grid grid-3 fight-log">
+            ${statCard('Wins', session.wins, '+30 XP je Win')}
+            ${statCard('Losses', session.losses, '+10 XP je Loss')}
+            ${statCard('Training', session.trainingFights, 'zählt nicht zur Winrate')}
+          </section>
           <div class="fight-actions">
             <button class="btn primary" data-action="fight-win">+ Win</button>
             <button class="btn" data-action="fight-loss">+ Loss</button>
-            <button class="btn" data-action="fight-training">+ Training</button>
+            <button class="btn" data-action="fight-training">+ Trainingsfight</button>
             <button class="btn ghost" data-action="fight-undo" ${session.fights <= 0 ? 'disabled' : ''}>Undo</button>
           </div>
         </section>
 
-        <section class="card stack challenge-counter">
+        <section class="card challenge-counter stack">
           <div class="between">
             <div>
               <p class="eyebrow">Bonus Challenge</p>
               <h3>${escapeHtml(session.challengeLabel)}</h3>
-              <p>${escapeHtml(`${session.challengeProgress} / ${session.challengeTarget} geschafft`)}</p>
+              <p>${escapeHtml(`${session.challengeProgress} / ${session.challengeTarget} Erfolge`)}</p>
             </div>
             <span class="tag ${session.challengeDone ? 'good' : 'warn'}">${session.challengeDone ? 'geschafft' : 'offen'}</span>
           </div>
-          <div class="progress-track"><div class="progress-fill" style="width:${challengePercent}%"></div></div>
+          <div class="progress-track" aria-label="Bonus-Fortschritt"><div class="progress-fill" style="width:${challengePercent}%"></div></div>
           <div class="row">
             <button class="btn primary" data-action="challenge-success" ${session.challengeDone ? 'disabled' : ''}>+ Erfolg</button>
             <button class="btn" data-action="challenge-decrement" ${session.challengeProgress <= 0 ? 'disabled' : ''}>Korrigieren</button>
           </div>
         </section>
 
-        <section class="card stack">
+        <section class="card review-card stack">
           <div>
-            <p class="eyebrow">Kurz-Review</p>
+            <p class="eyebrow">Kurz-Fokus</p>
             <h3>Was war am schwersten?</h3>
-            <p>Ein Klick reicht. Das hilft später der Analyse.</p>
+            <p>Ein Klick reicht. Kein langer Report.</p>
           </div>
           <div class="issue-grid">${renderIssueButtons(session.mainIssue)}</div>
           <label class="field">Notiz optional
