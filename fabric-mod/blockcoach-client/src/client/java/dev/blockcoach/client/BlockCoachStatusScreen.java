@@ -56,7 +56,7 @@ public final class BlockCoachStatusScreen extends Screen {
     private void sendMenuHandshake(String source) {
         MinecraftClient client = MinecraftClient.getInstance();
         String username = client.getSession() != null ? client.getSession().getUsername() : playerName;
-        bridge.send("minecraft_connected", BlockCoachBridgeClient.map(
+        bridge.send("menu_test", BlockCoachBridgeClient.map(
                 "playerName", username,
                 "minecraftVersion", BlockCoachConstants.MINECRAFT_VERSION,
                 "source", source
