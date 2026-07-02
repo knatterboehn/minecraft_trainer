@@ -8,7 +8,9 @@ const requiredFiles = [
   'fabric-mod/blockcoach-client/src/main/resources/fabric.mod.json',
   'fabric-mod/blockcoach-client/src/client/java/dev/blockcoach/client/BlockCoachClient.java',
   'fabric-mod/blockcoach-client/src/client/java/dev/blockcoach/client/BlockCoachBridgeClient.java',
-  'fabric-mod/blockcoach-client/README.md'
+  'fabric-mod/blockcoach-client/README.md',
+  'scripts/fabric-version-resolver.mjs',
+  'scripts/fabric-build-runner.mjs'
 ];
 
 for (const file of requiredFiles) {
@@ -18,6 +20,8 @@ for (const file of requiredFiles) {
 const buildGradle = readFileSync('fabric-mod/blockcoach-client/build.gradle', 'utf8');
 assert.match(buildGradle, /id 'fabric-loom'/);
 assert.doesNotMatch(buildGradle, /fabric-loom-remap/);
+assert.match(buildGradle, /net\.fabricmc:yarn:\$\{project\.yarn_mappings\}:v2/);
+assert.doesNotMatch(buildGradle, /officialMojangMappings/);
 
 const modJson = readFileSync('fabric-mod/blockcoach-client/src/main/resources/fabric.mod.json', 'utf8');
 assert.match(modJson, /"id"\s*:\s*"blockcoach_client"/);
@@ -34,6 +38,7 @@ assert.match(client, /server_joined/);
 assert.match(client, /health_changed/);
 assert.match(client, /hotbar_changed/);
 assert.match(client, /player_death/);
+assert.match(client, /lastUsePressed/);
 assert.doesNotMatch(client, /attack\(|swingHand\(|clickMouse\(|setYaw\(|setPitch\(/, 'Prototype must not automate combat or camera control.');
 
 const bridgeClient = readFileSync('fabric-mod/blockcoach-client/src/client/java/dev/blockcoach/client/BlockCoachBridgeClient.java', 'utf8');
@@ -42,9 +47,11 @@ assert.match(client, /http:\/\/127\.0\.0\.1:4317\/events/);
 
 const gradleProps = readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8');
 assert.match(gradleProps, /minecraft_version=1\.21\.11/);
-assert.match(gradleProps, /mod_version=0\.54\.0/);
+assert.match(gradleProps, /yarn_mappings=/);
+assert.match(gradleProps, /fabric_api_version=/);
+assert.match(gradleProps, /mod_version=0\.55\.0/);
 assert.match(bridgeClient, /Content-Type/);
 assert.match(bridgeClient, /application\/json/);
 assert.doesNotMatch(bridgeClient, /https?:\/\/(?!127\.0\.0\.1|localhost)/, 'Bridge client must not send to cloud endpoints.');
 
-console.log('Fabric prototype test passed: client mod skeleton, safe event sources and localhost-only bridge sender are consistent.');
+console.log('Fabric prototype test passed: client mod skeleton, Yarn mapping setup, safe event sources and localhost-only bridge sender are consistent.');

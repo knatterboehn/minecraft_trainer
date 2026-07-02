@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 
 const propsPath = 'fabric-mod/blockcoach-client/gradle.properties';
 const modJsonPath = 'fabric-mod/blockcoach-client/src/main/resources/fabric.mod.json';
+const buildGradlePath = 'fabric-mod/blockcoach-client/build.gradle';
 
 function readProperties(path) {
   const text = readFileSync(path, 'utf8');
@@ -25,21 +26,28 @@ function commandVersion(command, args) {
 
 if (!existsSync(propsPath)) throw new Error(`Missing ${propsPath}`);
 if (!existsSync(modJsonPath)) throw new Error(`Missing ${modJsonPath}`);
+if (!existsSync(buildGradlePath)) throw new Error(`Missing ${buildGradlePath}`);
 
 const props = readProperties(propsPath);
 const minecraftVersion = props.get('minecraft_version');
 const fabricApiVersion = props.get('fabric_api_version');
 const loaderVersion = props.get('loader_version');
+const yarnMappings = props.get('yarn_mappings');
 const modJson = readFileSync(modJsonPath, 'utf8');
+const buildGradle = readFileSync(buildGradlePath, 'utf8');
 
 const problems = [];
 if (minecraftVersion !== '1.21.11') problems.push(`minecraft_version must be 1.21.11, got ${minecraftVersion}`);
-if (!loaderVersion) problems.push('loader_version is missing');
-if (!fabricApiVersion) problems.push('fabric_api_version is missing');
-if (fabricApiVersion && !fabricApiVersion.includes('1.21.11')) {
-  problems.push(`fabric_api_version is still not pinned to a 1.21.11 artifact: ${fabricApiVersion}`);
+if (!loaderVersion || /UNRESOLVED/i.test(loaderVersion)) problems.push('loader_version is unresolved. Run npm run fabric:resolve -- --write.');
+if (!yarnMappings || /UNRESOLVED/i.test(yarnMappings) || !yarnMappings.includes('1.21.11')) {
+  problems.push(`yarn_mappings must be pinned for 1.21.11, got ${yarnMappings || 'missing'}. Run npm run fabric:resolve -- --write.`);
+}
+if (!fabricApiVersion || /UNRESOLVED/i.test(fabricApiVersion) || !fabricApiVersion.includes('1.21.11')) {
+  problems.push(`fabric_api_version must be pinned for 1.21.11, got ${fabricApiVersion || 'missing'}. Run npm run fabric:resolve -- --write.`);
 }
 if (!modJson.includes('"minecraft": "1.21.11"')) problems.push('fabric.mod.json must depend on Minecraft 1.21.11 exactly');
+if (!buildGradle.includes('net.fabricmc:yarn:${project.yarn_mappings}:v2')) problems.push('build.gradle must use Yarn mappings because the prototype source uses Yarn names.');
+if (buildGradle.includes('officialMojangMappings')) problems.push('build.gradle still uses official Mojang mappings; use Yarn mappings for this prototype.');
 
 const javaVersion = commandVersion('java', ['-version']);
 if (!javaVersion) problems.push('Java was not found. Install Java 21 before building.');
@@ -48,13 +56,14 @@ else if (!/version "21\.|openjdk version "21\.|version "2[2-9]\.|openjdk version
 }
 
 const gradleVersion = commandVersion('gradle', ['--version']);
-if (!gradleVersion) problems.push('Gradle was not found. Install Gradle or open the mod folder in IntelliJ with Gradle support.');
+const gradlewExists = existsSync('fabric-mod/blockcoach-client/gradlew') || existsSync('fabric-mod/blockcoach-client/gradlew.bat');
+if (!gradleVersion && !gradlewExists) problems.push('Gradle was not found and no Gradle wrapper exists. Install Gradle or add a Gradle wrapper.');
 
 if (problems.length) {
   console.error('Fabric build preflight failed:');
   for (const problem of problems) console.error(`- ${problem}`);
-  console.error('\nNext step: update fabric-mod/blockcoach-client/gradle.properties with the official Fabric API version for Minecraft 1.21.11, then rerun npm run fabric:preflight.');
+  console.error('\nNext step: run npm run fabric:resolve -- --write, then rerun npm run fabric:preflight.');
   process.exit(1);
 }
 
-console.log('Fabric build preflight passed: Minecraft 1.21.11 target, Java/Gradle, Fabric properties and mod metadata are ready.');
+console.log('Fabric build preflight passed: Minecraft 1.21.11 target, Yarn mappings, Fabric API, Java/Gradle and mod metadata are ready.');

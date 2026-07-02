@@ -84,3 +84,17 @@ Bridge starten
 → aktive Quest übernimmt sichere Events
 → Gamification bleibt der Abschlussmoment
 ```
+
+## v0.55 Build-Korrektur
+
+v0.55 ändert keinen Spielerflow. Der Zweck ist technischer Unterbau für den echten Assistenztrainer:
+
+```text
+Fabric-Versionen lokal auflösen
+→ Yarn-Mappings korrekt setzen
+→ Preflight prüfen
+→ Mod bauen
+→ erst danach echte Minecraft-Events testen
+```
+
+UX-Regel bleibt: Der Spieler soll später nichts von Mapping-/Build-Details sehen. In der App zählt nur, ob BlockCoach Live verbunden ist und ob echte Events in die Quest einfließen.

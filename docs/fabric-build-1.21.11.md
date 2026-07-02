@@ -1,8 +1,8 @@
-# v0.54 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.55 Fabric Build Setup - Minecraft Java 1.21.11
 
-## Goal
+## Ziel
 
-Prepare the first local build/start path for the BlockCoach Fabric Client Prototype.
+Den Fabric-Prototyp so vorbereiten, dass er lokal auf Vinces Rechner gegen Minecraft Java `1.21.11` gebaut werden kann.
 
 ```text
 Minecraft Java 1.21.11
@@ -11,139 +11,151 @@ Minecraft Java 1.21.11
 → BlockCoach Web-App
 ```
 
-## Current status
+## Warum v0.55 wichtig ist
 
-Prepared:
+v0.54 hatte einen versteckten Build-Risikopunkt: Der Java-Code war in Yarn-Namen geschrieben, aber `build.gradle` nutzte Mojang-Mappings. Das ist für den echten Build nicht sauber.
+
+v0.55 korrigiert das:
+
+```gradle
+mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+```
+
+## Status
+
+Vorbereitet:
 
 - `minecraft_version=1.21.11`
-- `fabric.mod.json` depends on Minecraft `1.21.11`
-- safe localhost-only bridge endpoint
-- no cloud endpoint
-- no auto-clicking, auto-aim, camera control, enemy marking, or gameplay automation
-- local bridge and web app already tested
+- `fabric.mod.json` hängt exakt an Minecraft `1.21.11`
+- Yarn-Mappings statt falscher Mapping-Kombination
+- Resolver für Loader, Yarn und Fabric API
+- sicherer Build-Runner
+- localhost-only Bridge Endpoint
+- kein Cloud-Endpoint
+- keine Auto-Aim-/Auto-Click-/Gameplay-Automation
 
-Open before a real Gradle build:
+Noch lokal zu erledigen:
 
-- `fabric_api_version` must be updated to an official Fabric API artifact for Minecraft `1.21.11`.
+- Fabric-Artefakte auf Vinces Rechner auflösen
+- Preflight ausführen
+- Gradle-Build ausführen
 
-This is intentional. The repository should not silently build against a wrong Fabric API version.
-
-## Local prerequisites
+## Voraussetzungen lokal
 
 - Minecraft Java Edition `1.21.11`
-- Java 21 or newer
-- Gradle or an IDE with Gradle support
-- Fabric Loader profile for Minecraft `1.21.11`
-- Node.js for the local bridge and tests
+- Java 21 oder neuer
+- Gradle oder IntelliJ/VS Code mit Gradle-Unterstützung
+- Node.js
+- Internetzugriff für Fabric Meta/Fabric Maven
 
-## Step 1 - Start BlockCoach Web-App
+## Schritt 1 - Web-App starten
 
-Open the project in VS Code and start the app through Live Server.
+Öffne das Projekt in VS Code und starte die App über Live Server.
 
-## Step 2 - Start the local bridge
+## Schritt 2 - Local Bridge starten
 
-From the project root:
+Im Projektroot:
 
 ```zsh
 npm run bridge
 ```
 
-Expected health endpoint:
+Health Check:
 
 ```text
 http://127.0.0.1:4317/health
 ```
 
-## Step 3 - Pin Fabric API for 1.21.11
+## Schritt 3 - Fabric-Versionen auflösen
 
-Open:
+Dry Run:
 
-```text
-fabric-mod/blockcoach-client/gradle.properties
+```zsh
+npm run fabric:resolve:dry
 ```
 
-Current important values:
+Schreiben in `gradle.properties`:
+
+```zsh
+npm run fabric:resolve -- --write
+```
+
+Der Resolver liest:
+
+- Fabric Loader über Fabric Meta
+- Yarn Mappings über Fabric Meta
+- Fabric API über Fabric Maven metadata
+
+Und schreibt danach:
 
 ```properties
-minecraft_version=1.21.11
-loader_version=0.19.3
-fabric_api_version=0.102.0+1.21
+loader_version=...
+yarn_mappings=...
+fabric_api_version=...
 ```
 
-Before building, replace `fabric_api_version` with the official Fabric API version for Minecraft `1.21.11`.
-
-The preflight checks this on purpose.
-
-## Step 4 - Run preflight
+## Schritt 4 - Preflight
 
 ```zsh
 npm run fabric:preflight
 ```
 
-If it fails, fix the listed item first. The most likely first failure is:
+Der Preflight stoppt, wenn:
 
-```text
-fabric_api_version is still not pinned to a 1.21.11 artifact
-```
+- `loader_version` noch `UNRESOLVED` ist
+- `yarn_mappings` nicht zu `1.21.11` passt
+- `fabric_api_version` nicht zu `1.21.11` passt
+- Java 21 fehlt
+- Gradle fehlt
+- `build.gradle` wieder auf falsche Mappings zurückfällt
 
-## Step 5 - Build the mod
-
-After preflight passes:
+## Schritt 5 - Build
 
 ```zsh
 npm run fabric:build
 ```
 
-Expected output location:
+Erwarteter Output:
 
 ```text
 fabric-mod/blockcoach-client/build/libs/
 ```
 
-## Step 6 - Install locally
+## Schritt 6 - In Minecraft testen
 
-Copy the built `.jar` into the Minecraft mods folder for the Fabric `1.21.11` profile.
-
-Then start Minecraft through the Fabric profile.
-
-## Step 7 - Verify data flow
-
-With the bridge running, the Web-App should receive:
+1. Built `.jar` in den Mods-Ordner des Fabric-Profils kopieren.
+2. Bridge laufen lassen.
+3. Minecraft 1.21.11 mit Fabric starten.
+4. BlockCoach Web-App öffnen.
+5. Erwartete Events:
 
 ```json
 { "type": "minecraft_connected", "minecraftVersion": "1.21.11" }
-```
-
-Then, after joining a server:
-
-```json
 { "type": "server_joined", "server": "..." }
 ```
 
-## Safety boundary
+## Sicherheitsgrenze
 
-BlockCoach is a coach, not a cheat.
+BlockCoach ist ein Coach, kein Cheat.
 
-The prototype must not:
+Der Prototype darf nicht:
 
-- aim
-- click
-- fight
-- move the camera
-- mark enemies
-- automate gameplay
-- upload data to cloud endpoints
+- aimen
+- klicken
+- kämpfen
+- Kamera bewegen
+- Gegner markieren
+- Gameplay automatisieren
+- Daten an Cloud-Endpunkte senden
 
-It only reads safe client-side state and sends local telemetry events to `127.0.0.1`.
+Er liest sichere Client-Zustände und sendet lokale Telemetrie an `127.0.0.1`.
 
-## Next version
+## Nächster Schritt nach erfolgreichem Build
 
-v0.55 should focus on one narrow automatic detection path:
+v0.56 sollte erst dann serverabhängige Erkennung ergänzen:
 
 ```text
-server_joined + player_death + simple chat_message parser
-→ safe fight/loss inference
-→ active Daily Quest progress
+chat_message + scoreboard_update
+→ vorsichtige Fight-/Win-/Loss-Erkennung
+→ aktiver Daily-Quest-Fortschritt
 ```
-
-No advanced analysis before the basic event chain works in real Minecraft.

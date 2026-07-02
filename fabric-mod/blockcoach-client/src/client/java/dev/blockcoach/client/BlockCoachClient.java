@@ -22,6 +22,7 @@ public final class BlockCoachClient implements ClientModInitializer {
     private String lastMainHandItem = "";
     private boolean deathSent = false;
     private long lastSessionTickAt = 0L;
+    private boolean lastUsePressed = false;
 
     @Override
     public void onInitializeClient() {
@@ -94,12 +95,14 @@ public final class BlockCoachClient implements ClientModInitializer {
             lastMainHandItem = item;
         }
 
-        if (client.options.useKey.isPressed()) {
+        boolean usePressed = client.options.useKey.isPressed();
+        if (usePressed && !lastUsePressed) {
             bridge.send("item_used", BlockCoachBridgeClient.map(
                     "slot", slot,
                     "item", item
             ));
         }
+        lastUsePressed = usePressed;
     }
 
     private void sendSessionTick(MinecraftClient client) {

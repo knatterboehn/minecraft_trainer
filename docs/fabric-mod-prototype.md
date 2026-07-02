@@ -1,11 +1,11 @@
-# v0.54 Fabric Mod Prototype
+# v0.55 Fabric Mod Prototype
 
-## Goal
+## Ziel
 
-Prove the first real integration chain without pretending that full match detection already exists.
+Die erste echte Integrationskette vorbereiten, ohne zu behaupten, dass vollständige Match-Erkennung schon existiert.
 
 ```text
-Minecraft Java Edition
+Minecraft Java Edition 1.21.11
 → Fabric Client Mod Prototype
 → Local Bridge
 → BlockCoach Web-App
@@ -17,7 +17,7 @@ Minecraft Java Edition
 fabric-mod/blockcoach-client/
 ```
 
-## What it sends
+## Was er sendet
 
 - `minecraft_connected`
 - `server_joined`
@@ -27,15 +27,15 @@ fabric-mod/blockcoach-client/
 - `player_death`
 - `session_tick`
 
-## What it does not do
+## Was er nicht macht
 
-- no auto-aim
-- no auto-clicking
-- no camera control
-- no enemy marking
-- no cloud upload
-- no win/loss parser yet
-- no full combat analysis yet
+- kein Auto-Aim
+- kein Auto-Klicken
+- keine Kamera-Kontrolle
+- keine Gegner-Markierung
+- kein Cloud-Upload
+- kein Win/Loss-Parser yet
+- keine vollständige Fight-Analyse yet
 
 ## Local bridge requirement
 
@@ -57,8 +57,18 @@ Override endpoint for development:
 -Dblockcoach.bridge=http://127.0.0.1:4317/events
 ```
 
-## Version note
+## Mapping note
 
-Target version: `Minecraft Java 1.21.11`.
+The source uses Yarn names. Build must therefore use Yarn mappings:
 
-`gradle.properties` is pinned to `minecraft_version=1.21.11`. The remaining open build value is `fabric_api_version`: update it to an official Fabric API artifact for `1.21.11` before running a real Gradle build. Use `npm run fabric:preflight` to catch this before build time.
+```gradle
+mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+```
+
+Run this before the first real build:
+
+```zsh
+npm run fabric:resolve -- --write
+npm run fabric:preflight
+npm run fabric:build
+```

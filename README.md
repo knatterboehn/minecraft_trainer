@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.54** richtet den Fabric-Prototyp auf Minecraft Java `1.21.11` aus und ergänzt einen lokalen Build-/Startpfad für die erste Mod-Verbindung.
+**Version 0.55** macht den Fabric-Prototyp build-näher: Yarn-Mappings statt falscher Mapping-Kombination, ein lokaler Version-Resolver für Minecraft Java `1.21.11` und ein sicherer Build-Runner.
 
 ## Produktprinzip
 
@@ -45,12 +45,12 @@ Daily Quest sehen
 → XP, Streak und Quest-Verlauf sehen
 ```
 
-## Live Integration v0.54
+## Live Integration
 
 Zielarchitektur:
 
 ```text
-Minecraft Java Edition
+Minecraft Java Edition 1.21.11
 → Fabric Client Mod Prototype
 → Local Bridge http://127.0.0.1:4317/events
 → WebSocket ws://localhost:4317/events
@@ -58,7 +58,7 @@ Minecraft Java Edition
 → GameEvents + Gamification
 ```
 
-Bereits vorhanden seit v0.53:
+Vorhanden:
 
 - `tools/local-bridge/server.mjs`
 - `tools/local-bridge/emit.mjs`
@@ -95,18 +95,12 @@ Der Prototype liegt hier:
 fabric-mod/blockcoach-client/
 ```
 
-Zielversion für den Fabric-Prototyp ist jetzt Minecraft Java `1.21.11`. Die Datei `gradle.properties` ist auf `minecraft_version=1.21.11` gesetzt. Der exakte `fabric_api_version`-Wert muss vor einem echten Gradle-Build auf ein offizielles Fabric-API-Artefakt für `1.21.11` aktualisiert werden.
+Wichtig: Der Java-Code nutzt Yarn-Namen wie `MinecraftClient`, `ClientTickEvents` und `ClientPlayConnectionEvents`. Deshalb verwendet `build.gradle` jetzt Yarn-Mappings. Fabric empfiehlt, Projektversionen für Minecraft, Mappings, Loader und Loom passend zur Zielversion zu setzen; der neue Resolver erledigt genau diesen Schritt lokal.
 
+Versionen lokal auflösen und schreiben:
 
-## Fabric Build Setup für 1.21.11
-
-Die lokale Mod-Strecke ist vorbereitet für:
-
-```text
-Minecraft Java 1.21.11
-Fabric Client Mod
-Local Bridge localhost:4317
-BlockCoach Web-App
+```zsh
+npm run fabric:resolve -- --write
 ```
 
 Preflight prüfen:
@@ -115,9 +109,7 @@ Preflight prüfen:
 npm run fabric:preflight
 ```
 
-Der Preflight stoppt bewusst, wenn `fabric_api_version` noch nicht auf ein offizielles Fabric-API-Artefakt für `1.21.11` gesetzt wurde. Dadurch bauen wir nicht versehentlich gegen eine falsche Minecraft-Version.
-
-Build nach erfolgreichem Preflight:
+Build starten:
 
 ```zsh
 npm run fabric:build
@@ -174,13 +166,13 @@ npm run test:local-bridge
 npm run test:fabric
 ```
 
-## Testabdeckung
+## Fabric-spezifisch
 
-- Syntax-Check aller JS-Dateien
-- Smoke- und Regression-Tests
-- Bridge-Integration-Test
-- Local-Bridge-Test mit echtem WebSocket
-- Fabric-Prototyp-Strukturtest
-- Browser-E2E mit echten Klicks
+```bash
+npm run fabric:resolve:dry
+npm run fabric:resolve -- --write
+npm run fabric:preflight
+npm run fabric:build
+```
 
-Siehe `docs/test-report-v054.md`.
+`fabric:resolve` braucht Internetzugriff auf Fabric Meta und Fabric Maven. In dieser Chat-Umgebung kann ich den echten Gradle-Build nicht ausführen, weil externe Maven-/Gradle-Abhängigkeiten nicht geladen werden können.
