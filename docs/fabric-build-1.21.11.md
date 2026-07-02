@@ -1,4 +1,4 @@
-# v0.56 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.57 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 
@@ -152,7 +152,7 @@ Er liest sichere Client-Zustände und sendet lokale Telemetrie an `127.0.0.1`.
 
 ## Nächster Schritt nach erfolgreichem Build
 
-v0.57 kann serverabhängige Erkennung ergänzen:
+v0.58 kann serverabhängige Erkennung ergänzen:
 
 ```text
 chat_message + scoreboard_update

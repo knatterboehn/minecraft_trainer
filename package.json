@@ -1,11 +1,11 @@
 {
   "name": "blockcoach",
-  "version": "0.56.0",
+  "version": "0.57.0",
   "private": true,
   "type": "module",
   "scripts": {
     "check": "node scripts/syntax-check.mjs",
-    "test": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/bridge-integration-test.mjs && node scripts/local-bridge-test.mjs && node scripts/fabric-prototype-test.mjs && node scripts/release-prep-test.mjs && node scripts/e2e-user-flow-test.mjs",
+    "test": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/bridge-integration-test.mjs && node scripts/local-bridge-test.mjs && node scripts/fabric-prototype-test.mjs && node scripts/release-prep-test.mjs && node scripts/github-actions-test.mjs && node scripts/e2e-user-flow-test.mjs",
     "test:e2e": "node scripts/e2e-user-flow-test.mjs",
     "test:bridge": "node scripts/bridge-integration-test.mjs",
     "bridge": "node tools/local-bridge/server.mjs",
@@ -16,6 +16,9 @@
     "fabric:build": "node scripts/fabric-build-runner.mjs",
     "fabric:resolve": "node scripts/fabric-version-resolver.mjs --write",
     "fabric:resolve:dry": "node scripts/fabric-version-resolver.mjs",
-    "test:release-prep": "node scripts/release-prep-test.mjs"
+    "test:release-prep": "node scripts/release-prep-test.mjs",
+    "ci:web": "npm run check && npm test",
+    "ci:fabric": "npm run fabric:resolve && npm run fabric:preflight && npm run fabric:build",
+    "test:workflow": "node scripts/github-actions-test.mjs"
   }
 }

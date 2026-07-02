@@ -5,11 +5,11 @@ GitHub Releases should be the first alpha distribution step before Modrinth and 
 ## Target release
 
 ```text
-Tag: blockcoach-client-v0.56.0
-Title: BlockCoach Client 0.56.0 Alpha
+Tag: blockcoach-client-v0.57.0
+Title: BlockCoach Client 0.57.0 Alpha
 Minecraft: Java Edition 1.21.11
 Loader: Fabric
-Artifact: blockcoach-client-0.56.0+1.21.11.jar
+Artifact: blockcoach-client-0.57.0+1.21.11.jar
 ```
 
 ## Before creating the release
@@ -18,7 +18,9 @@ Artifact: blockcoach-client-0.56.0+1.21.11.jar
 - [ ] `npm test` passes
 - [ ] `npm run fabric:resolve -- --write` completed locally or in CI
 - [ ] `npm run fabric:preflight` passes locally or in CI
-- [ ] `npm run fabric:build` creates a `.jar`
+- [ ] GitHub Actions workflow `BlockCoach Fabric Build` passes
+- [ ] Workflow artifact contains the `.jar`
+- [ ] `npm run fabric:build` creates a `.jar` locally or in CI
 - [ ] `.jar` starts in Minecraft Java `1.21.11` with Fabric
 - [ ] Local Bridge receives `minecraft_connected`
 - [ ] Local Bridge receives `server_joined` after joining a server
@@ -32,7 +34,7 @@ Artifact: blockcoach-client-0.56.0+1.21.11.jar
 ## Release notes draft
 
 ```markdown
-# BlockCoach Client 0.56.0 Alpha
+# BlockCoach Client 0.57.0 Alpha
 
 **Level up your fights.**
 

@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+.vscode/
+
+# Local build output
+fabric-mod/blockcoach-client/.gradle/
+fabric-mod/blockcoach-client/build/
+
+# Local test output
+*.log

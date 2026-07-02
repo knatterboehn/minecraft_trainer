@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.56** bereitet die öffentliche Mod-Veröffentlichung vor: Release-Metadaten, Installationsguide, Privacy Notes, Fair-Play-Policy, GitHub-Release-Checkliste sowie Modrinth-/CurseForge-Entwürfe.
+**Version 0.57** ergänzt eine GitHub-Actions-Build-Pipeline: Web-App-Tests laufen automatisch, der Fabric-Prototyp wird gegen Minecraft Java `1.21.11` vorbereitet und ein `.jar` wird als Workflow-Artefakt gebaut.
 
 ## Produktprinzip
 
@@ -86,6 +86,8 @@ docs/mod-release-metadata.json
 docs/modrinth.md
 docs/curseforge.md
 docs/github-release-checklist.md
+docs/github-actions-build.md
+.github/workflows/fabric-build.yml
 ```
 
 Empfohlene Veröffentlichungsreihenfolge:
@@ -99,11 +101,38 @@ Empfohlene Veröffentlichungsreihenfolge:
 Noch nicht erledigt:
 
 ```text
-Echten Fabric-JAR-Build ausführen
+GitHub-Actions-Workflow nach Push erfolgreich laufen lassen
+Artifact-JAR herunterladen
 JAR lokal in Minecraft Java 1.21.11 testen
 JAR als GitHub Release hochladen
 Modrinth/CurseForge manuell einreichen
 ```
+
+## GitHub Actions Build
+
+v0.57 ergänzt einen automatischen Build-Workflow:
+
+```text
+.github/workflows/fabric-build.yml
+```
+
+Der Workflow prüft zuerst die Web-App und baut danach den Fabric-Client:
+
+```text
+npm run ci:web
+npm run fabric:resolve
+npm run fabric:preflight
+npm run fabric:build
+npm run ci:fabric
+```
+
+Das erwartete Workflow-Artefakt heißt:
+
+```text
+blockcoach-client-0.57.0-minecraft-1.21.11
+```
+
+Details: `docs/github-actions-build.md`.
 
 ## Bridge starten
 
@@ -157,7 +186,7 @@ Für Alpha-Tester nach einem erfolgreichen Build:
 1. Minecraft Java 1.21.11 installieren
 2. Fabric Loader installieren
 3. Fabric API installieren, falls benötigt
-4. blockcoach-client-0.56.0+1.21.11.jar in den mods-Ordner legen
+4. blockcoach-client-0.57.0+1.21.11.jar in den mods-Ordner legen
 5. npm run bridge starten
 6. BlockCoach Web-App öffnen
 7. Minecraft mit Fabric starten
@@ -230,6 +259,7 @@ npm run test:bridge
 npm run test:local-bridge
 npm run test:fabric
 npm run test:release-prep
+npm run test:workflow
 ```
 
 ## Fabric-spezifisch

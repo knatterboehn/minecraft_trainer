@@ -85,22 +85,23 @@ BlockCoach is not officially affiliated with Minecraft, Mojang, or Microsoft.
 ## Version upload draft
 
 ```text
-Version name: BlockCoach Client 0.56.0 Alpha
-Version number: 0.56.0+1.21.11
+Version name: BlockCoach Client 0.57.0 Alpha
+Version number: 0.57.0+1.21.11
 Version type: Alpha
 Game versions: 1.21.11
 Loaders: Fabric
-Primary file: blockcoach-client-0.56.0+1.21.11.jar
+Primary file: blockcoach-client-0.57.0+1.21.11.jar
 ```
 
 ## Changelog draft
 
 ```markdown
-## 0.56.0 Alpha
+## 0.57.0 Alpha
 
-Initial public release preparation for BlockCoach Client.
+Alpha release preparation for BlockCoach Client with automated GitHub Actions build support.
 
-- Adds the first Fabric client prototype metadata
+- Adds GitHub Actions artifact build support
+- Keeps the first Fabric client prototype metadata
 - Targets Minecraft Java 1.21.11
 - Sends safe local events to the BlockCoach Local Bridge
 - Supports localhost-only coaching telemetry
