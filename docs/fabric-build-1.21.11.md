@@ -1,4 +1,4 @@
-# v0.58 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.59 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 
@@ -44,7 +44,7 @@ Noch lokal zu erledigen:
 
 - Minecraft Java Edition `1.21.11`
 - Java 21 oder neuer
-- Gradle oder IntelliJ/VS Code mit Gradle-Unterstützung
+- Gradle `9.5.0` oder neuer oder IntelliJ/VS Code mit kompatibler Gradle-Unterstützung
 - Node.js
 - Internetzugriff für Fabric Meta/Fabric Maven
 
@@ -106,7 +106,7 @@ Der Preflight stoppt, wenn:
 - `yarn_mappings` nicht zu `1.21.11` passt
 - `fabric_api_version` nicht zu `1.21.11` passt
 - Java 21 fehlt
-- Gradle fehlt
+- Gradle fehlt oder älter als `9.5.0` ist
 - `build.gradle` wieder auf falsche Mappings zurückfällt
 
 ## Schritt 5 - Build
@@ -150,9 +150,20 @@ Der Prototype darf nicht:
 
 Er liest sichere Client-Zustände und sendet lokale Telemetrie an `127.0.0.1`.
 
+## v0.59 Build-Fix
+
+Der erste GitHub-Actions-Fabric-Build ist nicht am Mod-Code gescheitert, sondern an der Gradle-/Loom-Kombination:
+
+```text
+Fabric Loom 1.17.x → benötigt Gradle Plugin API 9.5.0
+Runner vorher → Gradle 8.14.3
+```
+
+v0.59 setzt GitHub Actions deshalb auf Gradle `9.5.0` und der Preflight prüft Gradle `9.5.0+`.
+
 ## Nächster Schritt nach erfolgreichem Build
 
-v0.58 kann serverabhängige Erkennung ergänzen:
+v0.60 kann serverabhängige Erkennung ergänzen:
 
 ```text
 chat_message + scoreboard_update

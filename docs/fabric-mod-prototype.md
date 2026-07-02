@@ -1,4 +1,4 @@
-# v0.58 Fabric Mod Prototype
+# v0.59 Fabric Mod Prototype
 
 ## Ziel
 

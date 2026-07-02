@@ -45,11 +45,17 @@ const bridgeClient = readFileSync('fabric-mod/blockcoach-client/src/client/java/
 assert.match(bridgeClient, /HttpClient/);
 assert.match(client, /http:\/\/127\.0\.0\.1:4317\/events/);
 
+
+const preflight = readFileSync('scripts/fabric-build-preflight.mjs', 'utf8');
+assert.match(preflight, /requiredGradleVersion = '9\.5\.0'/);
+assert.match(preflight, /Gradle 9\.5\.0\+/);
+assert.match(preflight, /Fabric Loom 1\.17\.x/);
+
 const gradleProps = readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8');
 assert.match(gradleProps, /minecraft_version=1\.21\.11/);
 assert.match(gradleProps, /yarn_mappings=/);
 assert.match(gradleProps, /fabric_api_version=/);
-assert.match(gradleProps, /mod_version=0\.58\.0/);
+assert.match(gradleProps, /mod_version=0\.59\.0/);
 assert.match(bridgeClient, /Content-Type/);
 assert.match(bridgeClient, /application\/json/);
 assert.doesNotMatch(bridgeClient, /https?:\/\/(?!127\.0\.0\.1|localhost)/, 'Bridge client must not send to cloud endpoints.');

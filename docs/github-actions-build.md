@@ -1,8 +1,8 @@
-# v0.58 GitHub Actions Build
+# v0.59 GitHub Actions Build
 
 ## Ziel
 
-BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. v0.58 trennt die Pipeline bewusst in drei Jobs, damit Fehler im GitHub-UI nicht mehr als unklarer Sammelfehler erscheinen.
+BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. v0.59 trennt die Pipeline bewusst in drei Jobs, damit Fehler im GitHub-UI nicht mehr als unklarer Sammelfehler erscheinen.
 
 ```text
 Push nach main
@@ -86,7 +86,8 @@ Der Job nutzt:
 
 - Node.js `22`
 - Java `21`
-- Gradle `8.14.3`
+- Gradle `9.5.0`
+- Fabric Loom `1.17-SNAPSHOT`
 - Minecraft Java `1.21.11`
 - Yarn Mappings
 - Fabric Loader
@@ -99,7 +100,7 @@ Der Fabric-Build startet erst, wenn Web-App-Checks und Browser-E2E grün sind.
 Nach erfolgreichem Build wird hochgeladen:
 
 ```text
-blockcoach-client-0.58.0-minecraft-1.21.11
+blockcoach-client-0.59.0-minecraft-1.21.11
 ```
 
 Der eigentliche `.jar` liegt im Artifact aus:
@@ -111,12 +112,12 @@ fabric-mod/blockcoach-client/build/libs/*.jar
 Der erwartete spätere Dateiname ist:
 
 ```text
-blockcoach-client-0.58.0+1.21.11.jar
+blockcoach-client-0.59.0+1.21.11.jar
 ```
 
 ## Warum noch kein automatischer GitHub Release?
 
-v0.58 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
+v0.59 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
 
 1. der Workflow erfolgreich durchläuft,
 2. das `.jar` lokal in Minecraft 1.21.11 startet,
@@ -153,9 +154,15 @@ Fabric hat dann wahrscheinlich für `1.21.11` noch kein passendes Loader-, Yarn-
 
 Der Preflight stoppt absichtlich, wenn Versionen unresolved sind, Java/Gradle fehlt oder versehentlich falsche Mappings genutzt werden.
 
-### Build schlägt fehl
+### Build schlägt mit `No matching variant of net.fabricmc:fabric-loom` fehl
 
-Dann ist der erste echte Kompatibilitätstest erreicht. Die Ursache liegt meistens in:
+Dann passt die Gradle-Version nicht zur von Loom geforderten Gradle Plugin API. Der v0.58-Fehler kam genau daher: Fabric Loom 1.17 wurde geladen, der Runner nutzte aber noch Gradle 8.14.3. v0.59 setzt den Workflow deshalb auf Gradle `9.5.0`.
+
+Wenn dieser Fehler erneut auftaucht, im Workflow prüfen, ob der Step **Set up Gradle** wirklich `gradle-version: 9.5.0` nutzt.
+
+### Build schlägt danach weiter fehl
+
+Dann ist der erste echte Java-/Fabric-Kompatibilitätstest erreicht. Die Ursache liegt meistens in:
 
 - veränderten Yarn-Namen,
 - geänderten Fabric API Events,

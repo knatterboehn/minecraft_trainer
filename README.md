@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.58** ergänzt eine GitHub-Actions-Build-Pipeline: Web-App-Tests laufen automatisch, der Fabric-Prototyp wird gegen Minecraft Java `1.21.11` vorbereitet und ein `.jar` wird als Workflow-Artefakt gebaut.
+**Version 0.59** behebt den ersten echten Fabric-CI-Fehler: Der Workflow nutzt jetzt Gradle `9.5.0`, damit Fabric Loom `1.17-SNAPSHOT` mit Minecraft Java `1.21.11` konfiguriert werden kann.
 
 ## Produktprinzip
 
@@ -110,7 +110,7 @@ Modrinth/CurseForge manuell einreichen
 
 ## GitHub Actions Build
 
-v0.58 ergänzt einen automatischen Build-Workflow:
+v0.59 nutzt den automatischen Build-Workflow mit Gradle `9.5.0`:
 
 ```text
 .github/workflows/fabric-build.yml
@@ -124,10 +124,10 @@ npm run ci:e2e      # echter Browser-E2E-Test
 npm run ci:fabric   # Fabric Resolver + Preflight + Gradle Build
 ```
 
-Das erwartete Workflow-Artefakt heißt:
+Nach erfolgreichem Fabric-Build heißt das Workflow-Artefakt:
 
 ```text
-blockcoach-client-0.58.0-minecraft-1.21.11
+blockcoach-client-0.59.0-minecraft-1.21.11
 ```
 
 Details: `docs/github-actions-build.md`.
@@ -184,7 +184,7 @@ Für Alpha-Tester nach einem erfolgreichen Build:
 1. Minecraft Java 1.21.11 installieren
 2. Fabric Loader installieren
 3. Fabric API installieren, falls benötigt
-4. blockcoach-client-0.58.0+1.21.11.jar in den mods-Ordner legen
+4. blockcoach-client-0.59.0+1.21.11.jar in den mods-Ordner legen
 5. npm run bridge starten
 6. BlockCoach Web-App öffnen
 7. Minecraft mit Fabric starten
