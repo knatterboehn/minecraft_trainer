@@ -117,6 +117,12 @@ root.addEventListener('submit', (event) => {
 
 root.addEventListener('change', async (event) => {
   const input = event.target;
+  if (input.matches('[data-input="theme"]')) {
+    patchState((state) => { state.settings.theme = String(input.value || 'emerald'); });
+    showToast('Theme gespeichert.');
+    return;
+  }
+
   if (input.matches('[data-input="import"]') && input.files?.[0]) {
     try {
       const text = await input.files[0].text();

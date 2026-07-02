@@ -1,5 +1,6 @@
 import { SKILLS, SERVERS, DIFFICULTIES, THEMES, STORAGE_KEY } from '../../state/defaults.js';
 import { escapeHtml } from '../html.js';
+import { art } from '../assets.js';
 
 function options(items, selected) {
   return items.map((item) => `<option value="${escapeHtml(item)}" ${item === selected ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
@@ -7,65 +8,77 @@ function options(items, selected) {
 
 export function renderProfile(state) {
   return `
-    <main class="app-shell">
-      <div class="screen">
-        <section class="card page-intro">
+    <div class="screen">
+      <section class="section-head">
+        <div>
           <p class="eyebrow">Profil</p>
-          <h2>Daten & Sicherheit</h2>
-          <p>Alles bleibt lokal in einem Storage-Key: <strong>${escapeHtml(STORAGE_KEY)}</strong>.</p>
-        </section>
+          <h2>Daten verwalten.</h2>
+          <p>Bearbeite dein Profil oder sichere deinen Fortschritt als Datei. Alles bleibt im Storage-Key: ${escapeHtml(STORAGE_KEY)}.</p>
+        </div>
+      </section>
 
-        <form class="card stack" data-form="profile">
-          <div>
-            <p class="eyebrow">Spieler</p>
-            <h3>Basisdaten</h3>
+      <section class="split">
+        <form id="profileForm" class="card" data-form="profile">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Spielerdaten</p>
+              <h3>Profil bearbeiten</h3>
+            </div>
           </div>
-          <div class="grid grid-2">
-            <label class="field">Name
-              <input name="name" required maxlength="40" value="${escapeHtml(state.user.name)}" />
-            </label>
-            <label class="field">Hauptskill
-              <select name="mainSkill">${options(SKILLS, state.user.mainSkill)}</select>
-            </label>
-            <label class="field">Server
-              <select name="server">${options(SERVERS, state.user.server)}</select>
-            </label>
-            <label class="field">Schwierigkeit
-              <select name="difficulty">${options(DIFFICULTIES, state.user.difficulty)}</select>
-            </label>
-            <label class="field">Fights pro Quest
-              <input name="targetFights" type="number" min="1" max="20" value="${escapeHtml(state.user.targetFights)}" />
-            </label>
-            <label class="field">Theme
-              <select name="theme">${options(THEMES, state.settings.theme)}</select>
-            </label>
+          <div class="form-grid mt-5">
+            <div class="field">
+              <label for="profileName">Name</label>
+              <input id="profileName" name="name" required maxlength="24" value="${escapeHtml(state.user.name)}" />
+            </div>
+            <div class="field">
+              <label for="profileSkill">Hauptskill</label>
+              <select id="profileSkill" name="mainSkill">${options(SKILLS, state.user.mainSkill)}</select>
+            </div>
+            <div class="field">
+              <label for="profileServer">Server</label>
+              <select id="profileServer" name="server">${options(SERVERS, state.user.server)}</select>
+            </div>
+            <div class="field">
+              <label for="profileDifficulty">Schwierigkeit</label>
+              <select id="profileDifficulty" name="difficulty">${options(DIFFICULTIES, state.user.difficulty)}</select>
+            </div>
+            <div class="field">
+              <label for="profileTargetFights">Fights pro Quest</label>
+              <input id="profileTargetFights" name="targetFights" type="number" min="1" max="20" value="${escapeHtml(state.user.targetFights)}" />
+            </div>
+            <div class="field">
+              <label for="profileTheme">Theme</label>
+              <select id="profileTheme" name="theme">${options(THEMES, state.settings.theme)}</select>
+            </div>
           </div>
-          <button class="btn primary" type="submit">Profil speichern</button>
+          <div class="form-actions">
+            <button class="btn primary" type="submit">Änderungen speichern</button>
+          </div>
         </form>
 
-        <section class="grid grid-2">
-          <div class="card stack">
-            <div>
-              <p class="eyebrow">Export / Import</p>
-              <h3>Daten sichern</h3>
-              <p>Exportiere deine lokalen Daten oder importiere eine Sicherung.</p>
-            </div>
-            <div class="row">
-              <button class="btn" data-action="export-data">Export</button>
-              <label class="btn ghost" for="importFile">Import</label>
-              <input id="importFile" class="sr-only" data-input="import" type="file" accept="application/json" />
+        <aside class="grid">
+          <div class="card">
+            <p class="eyebrow">Daten</p>
+            <h3>Export / Import</h3>
+            <p>Sichere deinen Fortschritt als JSON-Datei oder importiere einen alten Stand.</p>
+            <div class="card-art" aria-hidden="true">${art('laugh')}</div>
+            <div class="hero-actions mt-4">
+              <button class="btn" type="button" data-action="export-data">Export</button>
+              <label class="btn" for="importFile">Import</label>
+              <input id="importFile" type="file" accept="application/json,.json" class="hidden" data-input="import" />
             </div>
           </div>
-          <div class="card stack danger-zone">
-            <div>
-              <p class="eyebrow">Reset</p>
-              <h3>Gefährlicher Bereich</h3>
-              <p>Setzt App-Daten lokal zurück. Exportiere vorher, wenn du sicher sein willst.</p>
+          <div class="card danger-zone">
+            <p class="eyebrow">Reset</p>
+            <h3>App zurücksetzen</h3>
+            <p>Das löscht deine gespeicherten App-Daten. Vorher am besten exportieren.</p>
+            <div class="card-art" aria-hidden="true">${art('creeper')}</div>
+            <div class="hero-actions mt-4">
+              <button class="btn danger" type="button" data-action="reset-app">Reset</button>
             </div>
-            <button class="btn danger" data-action="reset-app">App zurücksetzen</button>
           </div>
-        </section>
-      </div>
-    </main>
+        </aside>
+      </section>
+    </div>
   `;
 }

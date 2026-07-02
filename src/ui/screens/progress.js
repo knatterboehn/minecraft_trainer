@@ -1,22 +1,37 @@
 import { statCard } from '../components/statCard.js';
-import { emptyState } from '../components/emptyState.js';
 import { getWinrate } from '../../domain/progress.js';
 import { escapeHtml } from '../html.js';
+import { art } from '../assets.js';
+
+function formatDate(date) {
+  try { return new Intl.DateTimeFormat('de-DE').format(new Date(date)); }
+  catch { return String(date || ''); }
+}
+
+function renderEmpty() {
+  return `
+    <div class="empty-state with-art">
+      <div class="state-art" aria-hidden="true">${art('sleep')}</div>
+      <div><strong>Noch keine Quest gespeichert.</strong><span class="notice-note">Starte im Training und schließe deine erste Daily Quest ab.</span></div>
+    </div>
+  `;
+}
 
 function renderHistoryItem(entry) {
   const winrate = getWinrate(entry.wins, entry.losses);
   return `
     <article class="history-item">
       <div>
-        <strong>${escapeHtml(entry.skill)} · ${escapeHtml(entry.server)}</strong>
-        <p>${escapeHtml(`${entry.fights} Fights · ${entry.wins}W / ${entry.losses}L · ${winrate}% Winrate · +${entry.xp} XP`)}</p>
+        <strong>${escapeHtml(entry.skill)} · ${escapeHtml(formatDate(entry.date))}</strong>
         <div class="history-meta">
-          <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
+          <span class="tag ${entry.wins > entry.losses ? 'good' : 'warn'}">${escapeHtml(`${entry.wins}W / ${entry.losses}L`)}</span>
+          <span class="tag">${escapeHtml(`${entry.fights} Fights`)}</span>
+          <span class="tag">${escapeHtml(`${winrate}% Winrate`)}</span>
+          <span class="tag ${entry.challengeDone ? 'good' : ''}">${entry.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
           <span class="tag">${escapeHtml(entry.mainIssue || 'Weiß nicht')}</span>
-          ${entry.notes ? `<span class="tag note-tag">${escapeHtml(entry.notes)}</span>` : ''}
         </div>
       </div>
-      <span class="tag">${escapeHtml(entry.date)}</span>
+      <span class="tag accent">+${escapeHtml(entry.xp)} XP</span>
     </article>
   `;
 }
@@ -24,35 +39,57 @@ function renderHistoryItem(entry) {
 export function renderProgress(state) {
   const progress = state.progress;
   const winrate = getWinrate(progress.wins, progress.losses);
-  const history = [...state.history].sort((a, b) => b.date.localeCompare(a.date));
+  const levelProgress = ((progress.xp % 500) / 500) * 100;
+  const history = [...state.history].sort((a, b) => String(b.completedAt || b.date).localeCompare(String(a.completedAt || a.date)));
 
   return `
-    <main class="app-shell">
-      <div class="screen">
-        <section class="card page-intro">
+    <div class="screen">
+      <section class="section-head">
+        <div>
           <p class="eyebrow">Fortschritt</p>
-          <h2>Was hast du erreicht?</h2>
-          <p>XP, Fights und Quest-Verlauf. Keine erfundenen Skill-Werte.</p>
-        </section>
+          <h2>Deine Entwicklung als Spieler.</h2>
+          <p>XP, Rang, Fights und Quest-Historie werden aus deinen gespeicherten Sessions berechnet.</p>
+        </div>
+      </section>
 
-        <section class="grid grid-4">
-          ${statCard('XP', progress.xp, `Level ${progress.level}`)}
-          ${statCard('Rang', progress.rank, 'Langzeitfortschritt')}
-          ${statCard('Fights', progress.fights, `${progress.wins}W / ${progress.losses}L`)}
-          ${statCard('Winrate', `${winrate}%`, 'nur Wins/Losses')}
-        </section>
+      <section class="grid grid-4">
+        ${statCard('XP', progress.xp, `${Math.round(levelProgress)}% im aktuellen Level`, 'diamonds')}
+        ${statCard('Level', progress.level, `${500 - (progress.xp % 500 || 0)} XP bis zum nächsten Level`, 'reward')}
+        ${statCard('Rang', progress.rank, 'Rang basiert auf Gesamt-XP', 'laugh')}
+        ${statCard('Winrate', `${winrate}%`, `${progress.wins + progress.losses} Matches gespeichert`, winrate >= 50 ? 'reward' : 'creeper')}
+      </section>
 
-        <section class="card stack">
-          <div>
-            <p class="eyebrow">Quest-Verlauf</p>
-            <h3>Gespeicherte Daily Quests</h3>
-            <p>Jeder Eintrag kommt aus einer abgeschlossenen Quest.</p>
+      <section class="split">
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Quest-Werte</p>
+              <h3>Was du wirklich gespielt hast.</h3>
+            </div>
           </div>
-          <div class="history-list">
-            ${history.length ? history.map(renderHistoryItem).join('') : emptyState('Noch keine Quests', 'Schließe deine erste Daily Quest ab, dann erscheint sie hier.')}
+          <div class="grid mt-5">
+            <div>
+              <div class="metric-label"><span>Fights gesamt</span><span>${escapeHtml(progress.fights)}</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, progress.fights * 4)}%"></div></div>
+            </div>
+            <div>
+              <div class="metric-label"><span>Bonus Challenges</span><span>${escapeHtml(progress.challengesDone)}</span></div>
+              <div class="progress-track"><div class="progress-fill" style="width:${Math.min(100, progress.challengesDone * 12)}%"></div></div>
+            </div>
           </div>
-        </section>
-      </div>
-    </main>
+        </div>
+        <div class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Trainingshistorie</p>
+              <h3>Gespeicherte Sessions</h3>
+            </div>
+          </div>
+          <div class="history-list mt-5">
+            ${history.length ? history.slice(0, 8).map(renderHistoryItem).join('') : renderEmpty()}
+          </div>
+        </div>
+      </section>
+    </div>
   `;
 }

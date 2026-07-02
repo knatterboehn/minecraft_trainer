@@ -16,10 +16,10 @@ const screens = {
 };
 
 const nav = [
-  { id: 'dashboard', label: 'Heute' },
-  { id: 'training', label: 'Quest' },
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'training', label: 'Training' },
   { id: 'progress', label: 'Fortschritt' },
-  { id: 'analysis', label: 'Fokus' },
+  { id: 'analysis', label: 'Analyse' },
   { id: 'profile', label: 'Profil' }
 ];
 
@@ -30,19 +30,23 @@ function renderTopbar(state) {
       <div class="topbar-inner">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"><span></span></div>
-          <div>
-            <p>Minecraft Trainer</p>
+          <div class="brand-copy">
+            <p class="eyebrow">Minecraft Trainer</p>
             <h1>${escapeHtml(state.user.name || 'Trainer')}</h1>
           </div>
         </div>
         <nav class="nav" aria-label="Hauptnavigation">
           ${nav.map((item) => `
-            <button data-screen="${item.id}" class="${state.ui.screen === item.id ? 'active' : ''}">${escapeHtml(item.label)}</button>
+            <button type="button" data-screen="${item.id}" class="${state.ui.screen === item.id ? 'active' : ''}">${escapeHtml(item.label)}</button>
           `).join('')}
         </nav>
-        <div class="user-tools">
-          <span class="tag accent">Level ${escapeHtml(state.progress.level)}</span>
-          <span class="tag">${escapeHtml(state.settings.dataMode === 'bridge' ? 'Bridge' : 'Manuell')}</span>
+        <div class="topbar-actions">
+          <span class="user-pill">Level ${escapeHtml(state.progress.level)} · ${escapeHtml(state.progress.rank)}</span>
+          <div class="theme-control" style="--theme-color: var(--accent); --theme-rgb: var(--accent-rgb)">
+            <select class="theme-select" data-input="theme" aria-label="Theme wählen">
+              ${['emerald','redstone','diamond','amethyst','netherite'].map((theme) => `<option value="${theme}" ${state.settings.theme === theme ? 'selected' : ''}>${theme[0].toUpperCase()}${theme.slice(1)}</option>`).join('')}
+            </select>
+          </div>
         </div>
       </div>
     </header>
@@ -52,5 +56,6 @@ function renderTopbar(state) {
 export function renderApp(state) {
   document.body.dataset.theme = state.settings.theme || 'emerald';
   const screen = screens[state.ui.screen] || screens.dashboard;
-  return `${renderTopbar(state)}${screen(state)}`;
+  if (state.ui.screen === 'onboarding') return screen(state);
+  return `<main class="app-shell">${renderTopbar(state)}${screen(state)}</main>`;
 }

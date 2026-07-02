@@ -1,61 +1,48 @@
 import { statCard } from '../components/statCard.js';
-import { emptyState } from '../components/emptyState.js';
 import { calculateXpBreakdown, getWinrate } from '../../domain/progress.js';
 import { escapeHtml } from '../html.js';
+import { art } from '../assets.js';
 
 const issues = ['Aim', 'Movement', 'Positioning', 'Decision', 'Panic', 'Weiß nicht'];
 
 function renderIssueButtons(activeIssue) {
   return issues.map((issue) => `
-    <button class="issue-option ${issue === activeIssue ? 'active' : ''}" data-action="set-issue" data-issue="${escapeHtml(issue)}">${escapeHtml(issue)}</button>
+    <button type="button" class="btn issue-option ${issue === activeIssue ? 'active' : ''}" data-action="set-issue" data-issue="${escapeHtml(issue)}">${escapeHtml(issue)}</button>
   `).join('');
 }
 
 function renderSummary(state) {
-  const id = state.ui.lastSummaryId;
-  const entry = state.history.find((item) => item.id === id);
+  const entry = state.history.find((item) => item.id === state.ui.lastSummaryId);
   if (!entry) return '';
   const winrate = getWinrate(entry.wins, entry.losses);
   const focus = entry.mainIssue && entry.mainIssue !== 'Weiß nicht'
     ? `${entry.mainIssue}: nächste Quest nur darauf achten.`
     : 'Nächste Quest mit einem klaren Fokus spielen.';
-
   return `
-    <section class="card result-card stack">
-      <div>
+    <section class="hero">
+      <div class="hero-content">
         <p class="eyebrow">Quest abgeschlossen</p>
-        <h2>+${escapeHtml(entry.xp)} XP</h2>
+        <h2>+${escapeHtml(entry.xp)} XP gesammelt.</h2>
         <p>${escapeHtml(`${entry.fights} Fights · ${entry.wins} Wins · ${entry.losses} Losses · ${winrate}% Winrate`)}</p>
+        <div class="hero-actions">
+          <button class="btn primary" type="button" data-action="clear-summary" data-screen="dashboard">Zurück zum Dashboard</button>
+          <button class="btn" type="button" data-screen="progress">Fortschritt ansehen</button>
+        </div>
       </div>
-      <div class="row">
-        <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
-        <span class="tag">${escapeHtml(`Fokus: ${entry.mainIssue || 'Weiß nicht'}`)}</span>
-      </div>
-      <div class="card compact quiet-card">
-        <p class="eyebrow">Nächster Fokus</p>
-        <h3>${escapeHtml(focus)}</h3>
-      </div>
-      <div class="row">
-        <button class="btn primary" data-action="clear-summary" data-screen="dashboard">Zur Daily Quest</button>
-        <button class="btn" data-screen="progress">Fortschritt ansehen</button>
-      </div>
-    </section>
-  `;
-}
-
-function renderHowToPlay(quest) {
-  return `
-    <section class="card stack">
-      <div>
-        <p class="eyebrow">Quest-Flow</p>
-        <h3>So nutzt du die App neben Minecraft</h3>
-        <p>Die App misst nicht die Zeit, sondern deine Fights und deinen Bonus-Fortschritt.</p>
-      </div>
-      <div class="flow-grid">
-        <article class="flow-step"><span>1</span><div><strong>Minecraft spielen</strong><p>${escapeHtml(`${quest.targetFights} Fights auf ${quest.server}`)}</p></div></article>
-        <article class="flow-step"><span>2</span><div><strong>Fight loggen</strong><p>Nach jedem Fight genau ein Klick.</p></div></article>
-        <article class="flow-step"><span>3</span><div><strong>Bonus tracken</strong><p>${escapeHtml(`${quest.challenge.target} Erfolge für Bonus-XP`)}</p></div></article>
-      </div>
+      <aside class="hero-panel">
+        <div class="hero-panel-top">
+          <div>
+            <p class="eyebrow">Nächster Fokus</p>
+            <h3>${escapeHtml(focus)}</h3>
+            <p>${entry.challengeDone ? 'Bonus Challenge geschafft.' : 'Bonus Challenge blieb offen.'}</p>
+          </div>
+          <div class="panel-art large" aria-hidden="true">${art(entry.challengeDone ? 'reward' : 'focus')}</div>
+        </div>
+        <div class="tag-row">
+          <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus erledigt' : 'Bonus offen'}</span>
+          <span class="tag">${escapeHtml(entry.mainIssue || 'Weiß nicht')}</span>
+        </div>
+      </aside>
     </section>
   `;
 }
@@ -64,34 +51,64 @@ export function renderTraining(state) {
   const quest = state.todayTraining.quest;
   const session = state.todayTraining.activeSession;
   const summary = renderSummary(state);
-  if (summary) {
-    return `<main class="app-shell"><div class="screen">${summary}</div></main>`;
-  }
+  if (summary) return `<div class="screen">${summary}</div>`;
 
   if (!session) {
     return `
-      <main class="app-shell">
-        <div class="screen training-screen">
-          <section class="card quest-start-card stack">
-            <div>
+      <div class="screen">
+        <section class="section-head">
+          <div>
+            <p class="eyebrow">Training · Daily Quest</p>
+            <h2>${escapeHtml(quest.title)}</h2>
+            <p>${escapeHtml(`Server: ${quest.server}. Fokus: ${quest.focus}`)}</p>
+          </div>
+          <button class="btn" type="button" data-screen="dashboard">Dashboard</button>
+        </section>
+
+        <section class="split">
+          <div class="card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Quest vorbereiten</p>
+                <h3>Starte erst, wenn Minecraft offen ist.</h3>
+                <p>Die App bleibt neben dem Spiel. Du loggst nur Fights und Bonus-Erfolge.</p>
+              </div>
+              <span class="tag accent">Manuell</span>
+            </div>
+            <div class="exercise-list">
+              ${quest.hints.map((hint) => `
+                <label class="exercise">
+                  <input type="checkbox" disabled />
+                  <div><strong>${escapeHtml(hint)}</strong><span>Fokus-Hinweis für diese Quest</span></div>
+                  <span class="tag">Check</span>
+                </label>`).join('')}
+            </div>
+            <div class="notice with-art mt-4">
+              <div class="state-art" aria-hidden="true">${art('torch')}</div>
+              <div><strong>Bonus Challenge:</strong><br>${escapeHtml(quest.challenge.label)}<span class="notice-note">Ziel: ${escapeHtml(quest.challenge.target)} Erfolge · +100 XP Bonus</span></div>
+            </div>
+          </div>
+
+          <aside class="grid">
+            <div class="card timer">
               <p class="eyebrow">Daily Quest</p>
-              <h2>${escapeHtml(quest.title)}</h2>
-              <p>${escapeHtml(`Server: ${quest.server}. Fokus: ${quest.focus}`)}</p>
+              <div class="timer-time">${escapeHtml(quest.targetFights)} Fights</div>
+              <p>${escapeHtml(quest.server)} · ${escapeHtml(quest.skill)}</p>
+              <div class="timer-controls">
+                <button class="btn primary" type="button" data-action="start-quest">Quest starten</button>
+              </div>
             </div>
-            <div class="card compact quest-challenge">
-              <p class="eyebrow">Bonus Challenge</p>
-              <h3>${escapeHtml(quest.challenge.label)}</h3>
-              <p>${escapeHtml(`Ziel: ${quest.challenge.target} Erfolge`)}</p>
+            <div class="card compact cinematic-status">
+              <div>
+                <p class="eyebrow">Datenquelle</p>
+                <h3>Manueller Modus</h3>
+                <p>Live-Integration ist vorbereitet, aber nicht verbunden. Keine Fake-Daten.</p>
+              </div>
+              <div class="status-visual" aria-hidden="true">${art('platform')}</div>
             </div>
-            <div class="quest-hints">
-              ${quest.hints.map((hint) => `<span class="tag">${escapeHtml(hint)}</span>`).join('')}
-            </div>
-            <button class="btn primary" data-action="start-quest">Quest starten</button>
-          </section>
-          ${renderHowToPlay(quest)}
-          ${emptyState('Noch nicht gestartet', 'Starte die Quest erst, wenn du Minecraft offen hast und die Fights wirklich spielen willst.')}
-        </div>
-      </main>
+          </aside>
+        </section>
+      </div>
     `;
   }
 
@@ -100,76 +117,75 @@ export function renderTraining(state) {
   const fightPercent = Math.min(100, Math.round((session.fights / session.targetFights) * 100));
 
   return `
-    <main class="app-shell">
-      <div class="screen training-screen">
-        <section class="card quest-status-card stack">
-          <div class="between">
-            <div>
-              <p class="eyebrow">Daily Quest läuft</p>
-              <h2>${escapeHtml(session.targetFights)} ${escapeHtml(session.skill)}-Fights</h2>
-              <p>${escapeHtml(session.focus)}</p>
-            </div>
-            <span class="tag warn">Manueller Modus</span>
-          </div>
-          <div class="progress-track" aria-label="Fight-Fortschritt"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
-          <div class="row">
-            <span class="tag accent">${escapeHtml(`${session.fights} / ${session.targetFights} Fights`)}</span>
-            <span class="tag">${escapeHtml(session.server)}</span>
-            <span class="tag">XP-Vorschau: +${escapeHtml(preview.total)}</span>
-          </div>
-        </section>
+    <div class="screen">
+      <section class="section-head">
+        <div>
+          <p class="eyebrow">Training läuft</p>
+          <h2>${escapeHtml(session.skill)} Quest</h2>
+          <p>${escapeHtml(session.focus)}</p>
+        </div>
+        <span class="tag accent">XP-Vorschau +${escapeHtml(preview.total)}</span>
+      </section>
 
-        <section class="card fight-log-card stack">
-          <div class="between">
+      <section class="split">
+        <div class="card">
+          <div class="section-head">
             <div>
               <p class="eyebrow">Fight Log</p>
-              <h3>Nach jedem Fight ein Klick</h3>
-              <p>Schnell eintragen, nicht aus dem Spiel-Flow fallen.</p>
+              <h3>Nach jedem Fight ein Klick.</h3>
+              <p>Logge nur, was wirklich passiert ist. Schnell, ohne aus Minecraft rauszufallen.</p>
             </div>
-            <span class="tag accent">${escapeHtml(`${session.fights} Fights`)}</span>
+            <span class="tag accent">${escapeHtml(`${session.fights} / ${session.targetFights}`)}</span>
           </div>
-          <section class="grid grid-3 fight-log">
-            ${statCard('Wins', session.wins, '+30 XP je Win')}
-            ${statCard('Losses', session.losses, '+10 XP je Loss')}
-            ${statCard('Training', session.trainingFights, 'zählt nicht zur Winrate')}
+          <div class="progress-track mt-4" aria-label="Fight-Fortschritt"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
+          <section class="grid grid-3 mt-5">
+            ${statCard('Wins', session.wins, '+30 XP je Win', 'reward')}
+            ${statCard('Losses', session.losses, '+10 XP je Loss', 'creeper')}
+            ${statCard('Training', session.trainingFights, 'zählt nicht zur Winrate', 'ghast')}
           </section>
-          <div class="fight-actions">
-            <button class="btn primary" data-action="fight-win">+ Win</button>
-            <button class="btn" data-action="fight-loss">+ Loss</button>
-            <button class="btn" data-action="fight-training">+ Trainingsfight</button>
-            <button class="btn ghost" data-action="fight-undo" ${session.fights <= 0 ? 'disabled' : ''}>Undo</button>
+          <div class="hero-actions mt-4">
+            <button class="btn primary" type="button" data-action="fight-win">+ Win</button>
+            <button class="btn" type="button" data-action="fight-loss">+ Loss</button>
+            <button class="btn" type="button" data-action="fight-training">+ Trainingsfight</button>
+            <button class="btn ghost" type="button" data-action="fight-undo" ${session.fights <= 0 ? 'disabled' : ''}>Undo</button>
           </div>
-        </section>
 
-        <section class="card challenge-counter stack">
-          <div class="between">
-            <div>
-              <p class="eyebrow">Bonus Challenge</p>
-              <h3>${escapeHtml(session.challengeLabel)}</h3>
-              <p>${escapeHtml(`${session.challengeProgress} / ${session.challengeTarget} Erfolge`)}</p>
+          <div class="notice with-art mt-4">
+            <div class="state-art" aria-hidden="true">${art(session.challengeDone ? 'diamonds' : 'torch')}</div>
+            <div><strong>Bonus Challenge:</strong><br>${escapeHtml(session.challengeLabel)}<span class="notice-note">${escapeHtml(session.challengeProgress)} / ${escapeHtml(session.challengeTarget)} Erfolge</span></div>
+          </div>
+          <div class="progress-track mt-3" aria-label="Bonus-Fortschritt"><div class="progress-fill" style="width:${challengePercent}%"></div></div>
+          <div class="hero-actions mt-4">
+            <button class="btn primary" type="button" data-action="challenge-success" ${session.challengeDone ? 'disabled' : ''}>+ Erfolg</button>
+            <button class="btn" type="button" data-action="challenge-decrement" ${session.challengeProgress <= 0 ? 'disabled' : ''}>Korrigieren</button>
+          </div>
+        </div>
+
+        <aside class="grid">
+          <div class="card timer">
+            <p class="eyebrow">Quest-Fortschritt</p>
+            <div class="timer-time">${escapeHtml(session.fights)}</div>
+            <p>${escapeHtml(`von ${session.targetFights} Fights`)}</p>
+            <div class="timer-controls">
+              <span class="tag ${session.challengeDone ? 'good' : 'warn'}">${session.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
             </div>
-            <span class="tag ${session.challengeDone ? 'good' : 'warn'}">${session.challengeDone ? 'geschafft' : 'offen'}</span>
           </div>
-          <div class="progress-track" aria-label="Bonus-Fortschritt"><div class="progress-fill" style="width:${challengePercent}%"></div></div>
-          <div class="row">
-            <button class="btn primary" data-action="challenge-success" ${session.challengeDone ? 'disabled' : ''}>+ Erfolg</button>
-            <button class="btn" data-action="challenge-decrement" ${session.challengeProgress <= 0 ? 'disabled' : ''}>Korrigieren</button>
-          </div>
-        </section>
 
-        <section class="card review-card stack">
-          <div>
-            <p class="eyebrow">Kurz-Fokus</p>
+          <form class="card" data-form="quest-review">
+            <p class="eyebrow">Kurz-Review</p>
             <h3>Was war am schwersten?</h3>
             <p>Ein Klick reicht. Kein langer Report.</p>
-          </div>
-          <div class="issue-grid">${renderIssueButtons(session.mainIssue)}</div>
-          <label class="field">Notiz optional
-            <textarea data-input="notes" maxlength="500" placeholder="z. B. zweimal zu früh committed">${escapeHtml(session.notes)}</textarea>
-          </label>
-          <button class="btn primary" data-action="finish-quest" ${session.fights <= 0 ? 'disabled' : ''}>Quest abschließen</button>
-        </section>
-      </div>
-    </main>
+            <div class="issue-grid mt-4">${renderIssueButtons(session.mainIssue)}</div>
+            <div class="field mt-4">
+              <label for="questNotes">Notiz optional</label>
+              <textarea id="questNotes" data-input="notes" maxlength="500" placeholder="z. B. zweimal zu früh committed">${escapeHtml(session.notes)}</textarea>
+            </div>
+            <div class="form-actions">
+              <button class="btn primary" type="button" data-action="finish-quest" ${session.fights <= 0 ? 'disabled' : ''}>Quest abschließen</button>
+            </div>
+          </form>
+        </aside>
+      </section>
+    </div>
   `;
 }

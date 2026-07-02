@@ -1,12 +1,12 @@
 import { createDailyQuest } from '../domain/quest.js';
 
-export const APP_VERSION = '0.47';
+export const APP_VERSION = '0.48';
 export const STORAGE_KEY = 'minecraftTrainerApp';
 
 export const SKILLS = ['Sword PvP', 'Bow', 'Mace', 'UHC', 'Bedwars', 'Allround'];
 export const SERVERS = ['PvPClub', 'Hoplite', 'Minemen', 'Cubecraft', 'Hypixel', 'Anderer Server'];
 export const DIFFICULTIES = ['Locker', 'Normal', 'Schwer'];
-export const THEMES = ['emerald', 'diamond', 'redstone', 'netherite'];
+export const THEMES = ['emerald', 'redstone', 'diamond', 'amethyst', 'netherite'];
 
 export function todayISO(date = new Date()) {
   return date.toISOString().slice(0, 10);
