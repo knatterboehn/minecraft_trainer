@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.60** behebt den ersten echten Java-Compile-Fehler gegen Minecraft Java `1.21.11`: Die Mod nutzt keine entfernte `GameVersion.getName()`-API mehr und greift nicht mehr direkt auf das private `PlayerInventory.selectedSlot`-Feld zu.
+**Version 0.61** ergänzt die Alpha-Release-Automation: Ein Tag wie `v0.61.0-alpha` kann automatisch Web-Tests, Browser-E2E, Fabric-Build und einen GitHub-Prerelease mit `.jar`-Asset auslösen.
 
 ## Produktprinzip
 
@@ -73,9 +73,9 @@ Vorhanden:
   - `player_death`
   - `session_tick`
 
-## Public Mod Release Preparation
+## Release Automation
 
-Release-Unterlagen für die spätere Veröffentlichung der Fabric-Mod sind vorbereitet:
+Release-Unterlagen und Automation für die Fabric-Mod sind vorbereitet:
 
 ```text
 INSTALL_MOD.md
@@ -87,36 +87,38 @@ docs/modrinth.md
 docs/curseforge.md
 docs/github-release-checklist.md
 docs/github-actions-build.md
+docs/release-notes-alpha-template.md
+docs/alpha-test-checklist.md
 .github/workflows/fabric-build.yml
+.github/workflows/fabric-release.yml
 ```
 
 Empfohlene Veröffentlichungsreihenfolge:
 
 ```text
 1. GitHub Release Alpha
-2. Modrinth Draft / Alpha
-3. CurseForge Alpha
+2. Alpha-Test mit Vince/Testern
+3. Modrinth Draft / Alpha
+4. CurseForge Alpha
 ```
 
 Noch nicht erledigt:
 
 ```text
-GitHub-Actions-Workflow nach Push erfolgreich laufen lassen
-Artifact-JAR herunterladen
 JAR lokal in Minecraft Java 1.21.11 testen
-JAR als GitHub Release hochladen
+Bridge mit echter Minecraft-Instanz prüfen
 Modrinth/CurseForge manuell einreichen
 ```
 
-## GitHub Actions Build
+## GitHub Actions
 
-v0.60 nutzt den automatischen Build-Workflow mit Gradle `9.5.0` und enthält den ersten Minecraft-1.21.11-Compile-Fix:
+### Build Workflow
 
 ```text
 .github/workflows/fabric-build.yml
 ```
 
-Der Workflow ist in drei Jobs getrennt, damit Fehler im GitHub-UI besser lesbar sind:
+Der Build-Workflow läuft bei Push auf `main`, Pull Request und manuell. Er ist in drei Jobs getrennt:
 
 ```text
 npm run ci:web      # Syntax + Core-Tests ohne Browser
@@ -127,8 +129,22 @@ npm run ci:fabric   # Fabric Resolver + Preflight + Gradle Build
 Nach erfolgreichem Fabric-Build heißt das Workflow-Artefakt:
 
 ```text
-blockcoach-client-0.60.0-minecraft-1.21.11
+blockcoach-client-0.61.0-minecraft-1.21.11
 ```
+
+### Alpha Release Workflow
+
+```text
+.github/workflows/fabric-release.yml
+```
+
+Der Release-Workflow läuft bei Tags wie:
+
+```text
+v0.61.0-alpha
+```
+
+Er baut die Web-App-Checks, den Browser-E2E-Test und die Fabric-JAR erneut. Danach erstellt er einen GitHub-Prerelease und hängt die `.jar` an.
 
 Details: `docs/github-actions-build.md`.
 
@@ -178,19 +194,22 @@ Details: `docs/fabric-build-1.21.11.md`.
 
 ## Mod installieren
 
-Für Alpha-Tester nach einem erfolgreichen Build:
+Für Alpha-Tester nach einem erfolgreichen Release:
 
 ```text
 1. Minecraft Java 1.21.11 installieren
 2. Fabric Loader installieren
 3. Fabric API installieren, falls benötigt
-4. blockcoach-client-0.60.0+1.21.11.jar in den mods-Ordner legen
+4. blockcoach-client-0.61.0+1.21.11.jar in den mods-Ordner legen
 5. npm run bridge starten
 6. BlockCoach Web-App öffnen
 7. Minecraft mit Fabric starten
 ```
 
-Details: `INSTALL_MOD.md`.
+Details:
+
+- `INSTALL_MOD.md`
+- `docs/alpha-test-checklist.md`
 
 ## Datenschutz und Fair Play
 
@@ -258,6 +277,7 @@ npm run test:local-bridge
 npm run test:fabric
 npm run test:release-prep
 npm run test:workflow
+npm run test:release-automation
 ```
 
 ## Fabric-spezifisch

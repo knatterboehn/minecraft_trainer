@@ -1,6 +1,6 @@
 {
   "name": "blockcoach",
-  "version": "0.60.0",
+  "version": "0.61.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -20,7 +20,8 @@
     "ci:web": "npm run check && npm run test:core",
     "ci:fabric": "npm run fabric:resolve && npm run fabric:preflight && npm run fabric:build",
     "test:workflow": "node scripts/github-actions-test.mjs",
-    "test:core": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/bridge-integration-test.mjs && node scripts/local-bridge-test.mjs && node scripts/fabric-prototype-test.mjs && node scripts/release-prep-test.mjs && node scripts/github-actions-test.mjs",
-    "ci:e2e": "node scripts/e2e-user-flow-test.mjs"
+    "test:core": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/bridge-integration-test.mjs && node scripts/local-bridge-test.mjs && node scripts/fabric-prototype-test.mjs && node scripts/release-prep-test.mjs && node scripts/github-actions-test.mjs && node scripts/release-automation-test.mjs",
+    "ci:e2e": "node scripts/e2e-user-flow-test.mjs",
+    "test:release-automation": "node scripts/release-automation-test.mjs"
   }
 }

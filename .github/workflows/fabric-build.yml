@@ -107,6 +107,6 @@ jobs:
       - name: Upload Fabric JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: blockcoach-client-0.60.0-minecraft-1.21.11
+          name: blockcoach-client-0.61.0-minecraft-1.21.11
           path: fabric-mod/blockcoach-client/build/libs/*.jar
           if-no-files-found: error

@@ -59,7 +59,7 @@ const gradleProps = readFileSync('fabric-mod/blockcoach-client/gradle.properties
 assert.match(gradleProps, /minecraft_version=1\.21\.11/);
 assert.match(gradleProps, /yarn_mappings=/);
 assert.match(gradleProps, /fabric_api_version=/);
-assert.match(gradleProps, /mod_version=0\.60\.0/);
+assert.match(gradleProps, /mod_version=0\.61\.0/);
 assert.match(bridgeClient, /Content-Type/);
 assert.match(bridgeClient, /application\/json/);
 assert.doesNotMatch(bridgeClient, /https?:\/\/(?!127\.0\.0\.1|localhost)/, 'Bridge client must not send to cloud endpoints.');

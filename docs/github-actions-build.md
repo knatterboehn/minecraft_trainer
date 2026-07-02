@@ -1,8 +1,8 @@
-# v0.60 GitHub Actions Build
+# v0.61 GitHub Actions Build and Alpha Release
 
 ## Ziel
 
-BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. Die Pipeline bleibt in drei Jobs getrennt; v0.60 ergänzt zusätzlich den ersten Minecraft-1.21.11-Compile-Fix im Fabric-Client-Code.
+BlockCoach soll automatisch in GitHub getestet, als Fabric-Mod gebaut und bei Alpha-Tags als GitHub-Prerelease veröffentlicht werden.
 
 ```text
 Push nach main
@@ -12,21 +12,32 @@ Push nach main
 → .jar als GitHub Actions Artifact
 ```
 
-## Workflow
+```text
+Tag v0.61.0-alpha
+→ Web app checks
+→ Browser E2E checks
+→ Fabric client JAR
+→ GitHub Prerelease mit .jar Asset
+```
+
+## Workflows
 
 ```text
 .github/workflows/fabric-build.yml
+.github/workflows/fabric-release.yml
 ```
 
-Der Workflow läuft bei:
+## Build Workflow
+
+Der Build-Workflow läuft bei:
 
 - Push auf `main`
 - Pull Request
 - manuellem Start über `workflow_dispatch`
 
-## Jobs
+### Jobs
 
-### 1. Web app checks
+#### 1. Web app checks
 
 ```zsh
 npm run ci:web
@@ -42,10 +53,11 @@ Das prüft ohne Browser-Abhängigkeit:
 - Fabric Prototype Structure
 - Release Preparation
 - GitHub Actions Workflow
+- Release Automation Workflow
 
-Der Browser-E2E-Test läuft absichtlich nicht mehr in diesem Job. Dadurch ist sofort sichtbar, ob ein Fehler aus der App-Logik oder aus der Browser-Umgebung kommt.
+Der Browser-E2E-Test läuft absichtlich nicht in diesem Job. Dadurch ist sofort sichtbar, ob ein Fehler aus der App-Logik oder aus der Browser-Umgebung kommt.
 
-### 2. Browser E2E checks
+#### 2. Browser E2E checks
 
 ```zsh
 npm run ci:e2e
@@ -74,7 +86,7 @@ Zusätzlich werden die E2E-Screenshots als Artifact hochgeladen:
 blockcoach-e2e-screens
 ```
 
-### 3. Fabric client JAR
+#### 3. Fabric client JAR
 
 ```zsh
 npm run fabric:resolve
@@ -95,12 +107,12 @@ Der Job nutzt:
 
 Der Fabric-Build startet erst, wenn Web-App-Checks und Browser-E2E grün sind.
 
-## Ergebnis
+### Ergebnis
 
 Nach erfolgreichem Build wird hochgeladen:
 
 ```text
-blockcoach-client-0.60.0-minecraft-1.21.11
+blockcoach-client-0.61.0-minecraft-1.21.11
 ```
 
 Der eigentliche `.jar` liegt im Artifact aus:
@@ -109,22 +121,74 @@ Der eigentliche `.jar` liegt im Artifact aus:
 fabric-mod/blockcoach-client/build/libs/*.jar
 ```
 
-Der erwartete spätere Dateiname ist:
+Der erwartete Release-Dateiname ist:
 
 ```text
-blockcoach-client-0.60.0+1.21.11.jar
+blockcoach-client-0.61.0+1.21.11.jar
 ```
 
-## Warum noch kein automatischer GitHub Release?
+## Alpha Release Workflow
 
-v0.60 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
+Der Release-Workflow läuft bei Tags wie:
 
-1. der Workflow erfolgreich durchläuft,
-2. das `.jar` lokal in Minecraft 1.21.11 startet,
-3. die Bridge echte Events empfängt,
-4. keine Fair-Play- oder Privacy-Grenze verletzt wird.
+```text
+v0.61.0-alpha
+```
+
+Er kann auch manuell gestartet werden:
+
+```text
+Actions → BlockCoach Alpha Release → Run workflow → tag_name: v0.61.0-alpha
+```
+
+### Was der Release Workflow macht
+
+```text
+Checkout
+→ Node 22
+→ Java 21
+→ Gradle 9.5.0
+→ npm run ci:web
+→ npm run ci:e2e
+→ npm run fabric:resolve
+→ npm run fabric:preflight
+→ npm run fabric:build
+→ Release-JAR finden
+→ Artifact hochladen
+→ GitHub Prerelease erstellen
+→ .jar als Release Asset anhängen
+```
+
+### Rechte
+
+Nur der Release-Workflow nutzt Schreibrechte:
+
+```yaml
+permissions:
+  contents: write
+```
+
+Der normale Build-Workflow bleibt read-only.
+
+### Release Notes
+
+Der Release-Workflow nutzt:
+
+```text
+docs/release-notes-alpha-template.md
+```
+
+### Alpha-Test
+
+Nach dem Release nutzt der Tester:
+
+```text
+docs/alpha-test-checklist.md
+```
 
 ## Bedienung in GitHub
+
+### Build prüfen
 
 1. Repository öffnen.
 2. Tab **Actions** öffnen.
@@ -136,11 +200,26 @@ v0.60 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub R
    - **Fabric client JAR** = Fabric-/Gradle-/Mod-Buildproblem
 6. Nach erfolgreichem Lauf das `.jar`-Artifact herunterladen.
 
+### Alpha Release erzeugen
+
+```zsh
+git tag v0.61.0-alpha
+git push origin v0.61.0-alpha
+```
+
+Danach:
+
+1. GitHub → **Actions** öffnen.
+2. Workflow **BlockCoach Alpha Release** prüfen.
+3. Nach grünem Lauf GitHub → **Releases** öffnen.
+4. Prüfen, ob die `.jar` am Prerelease hängt.
+5. Link an Tester schicken.
+
 ## Troubleshooting
 
 ### Web app checks schlagen fehl
 
-Dann liegt der Fehler nicht im Browser, sondern in Syntax, Domain-Logik, Bridge-Tests, Release-Dokumenten oder Workflow-Konsistenz. Den Schritt **Run web checks and core tests** öffnen und die erste Fehlermeldung kopieren.
+Dann liegt der Fehler nicht im Browser, sondern in Syntax, Domain-Logik, Bridge-Tests, Release-Dokumenten oder Workflow-Konsistenz. Den Schritt **Run web checks** öffnen und die erste Fehlermeldung kopieren.
 
 ### Browser E2E checks schlagen fehl
 
@@ -148,7 +227,7 @@ Den Schritt **Show browser environment** und danach **Run browser E2E test** öf
 
 ### Fabric Resolver schlägt fehl
 
-Fabric hat dann wahrscheinlich für `1.21.11` noch kein passendes Loader-, Yarn- oder Fabric-API-Artefakt geliefert oder der Runner hatte kurzzeitig kein Netzwerk.
+Fabric hat dann wahrscheinlich für `1.21.11` kurzzeitig kein passendes Loader-, Yarn- oder Fabric-API-Artefakt geliefert oder der Runner hatte ein Netzwerkproblem.
 
 ### Preflight schlägt fehl
 
@@ -156,19 +235,20 @@ Der Preflight stoppt absichtlich, wenn Versionen unresolved sind, Java/Gradle fe
 
 ### Build schlägt mit `No matching variant of net.fabricmc:fabric-loom` fehl
 
-Dann passt die Gradle-Version nicht zur von Loom geforderten Gradle Plugin API. Der v0.58-Fehler kam genau daher: Fabric Loom 1.17 wurde geladen, der Runner nutzte aber noch Gradle 8.14.3. v0.60 setzt den Workflow deshalb auf Gradle `9.5.0`.
-
-Wenn dieser Fehler erneut auftaucht, im Workflow prüfen, ob der Step **Set up Gradle** wirklich `gradle-version: 9.5.0` nutzt.
+Dann passt die Gradle-Version nicht zur von Loom geforderten Gradle Plugin API. Der frühere Fehler kam genau daher: Fabric Loom 1.17 wurde geladen, der Runner nutzte aber noch Gradle 8.14.3. Der Workflow setzt deshalb auf Gradle `9.5.0`.
 
 ### Build schlägt mit `GameVersion.getName()` oder `selectedSlot has private access` fehl
 
-Dieser Fehler wurde in v0.60 behoben. Der Client-Code nutzt jetzt eine feste Zielversion für das Event-Feld `minecraftVersion` und liest den Hotbar-Slot über einen sicheren Resolver statt über das private Feld.
+Dieser Fehler wurde in v0.60 behoben. Der Client-Code nutzt eine feste Zielversion für das Event-Feld `minecraftVersion` und liest den Hotbar-Slot über einen sicheren Resolver statt über das private Feld.
 
-### Build schlägt danach weiter fehl
+### Release existiert bereits
 
-Dann ist der nächste Java-/Fabric-Kompatibilitätstest erreicht. Die Ursache liegt meistens in:
+Der Workflow lädt das neue `.jar` mit `--clobber` erneut hoch. Release Notes werden dabei nicht überschrieben.
 
-- weiteren veränderten Yarn-Namen,
-- geänderten Fabric API Events,
-- einer nicht kompatiblen Fabric API Version,
-- oder Java-Code, der gegen 1.21.11 angepasst werden muss.
+### Release-Tag hat falsches Format
+
+Der Release-Workflow akzeptiert nur Alpha-Tags wie:
+
+```text
+v0.61.0-alpha
+```

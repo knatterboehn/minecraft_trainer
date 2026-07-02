@@ -5,25 +5,25 @@ Target version:
 ```text
 Minecraft Java Edition 1.21.11
 Fabric Loader
-BlockCoach Client 0.60.0 alpha
+BlockCoach Client 0.61.0 alpha
 ```
 
 ## Current status
 
-The release package is prepared, but the first public `.jar` should only be published after a successful local or CI Gradle build.
+The Fabric client now builds successfully in GitHub Actions, and v0.61 adds automated GitHub alpha release creation.
 
-Expected future artifact:
+Expected release artifact:
 
 ```text
-blockcoach-client-0.60.0+1.21.11.jar
+blockcoach-client-0.61.0+1.21.11.jar
 ```
 
 ## Install for alpha testers
 
 1. Install Minecraft Java Edition `1.21.11`.
 2. Install Fabric Loader for Minecraft `1.21.11`.
-3. Install Fabric API if the build requires it.
-4. Download the BlockCoach `.jar` from GitHub Releases, Modrinth, or CurseForge after release.
+3. Install Fabric API if the release requires it.
+4. Download the BlockCoach `.jar` from the GitHub Alpha Release.
 5. Put the `.jar` into the Minecraft `mods` folder of the Fabric profile.
 6. Start the Local Bridge from the BlockCoach project:
 
@@ -35,6 +35,8 @@ npm run bridge
 8. Start Minecraft with the Fabric profile.
 9. Join a server or world.
 10. Check whether BlockCoach shows a live connection.
+
+Use `docs/alpha-test-checklist.md` for the full alpha test flow.
 
 ## Local bridge
 

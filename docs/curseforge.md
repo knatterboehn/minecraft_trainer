@@ -82,8 +82,8 @@ BlockCoach is not officially affiliated with Minecraft, Mojang, or Microsoft.
 ## File upload draft
 
 ```text
-Display name: BlockCoach Client 0.60.0 Alpha for Minecraft 1.21.11
-File name: blockcoach-client-0.60.0+1.21.11.jar
+Display name: BlockCoach Client 0.61.0 Alpha for Minecraft 1.21.11
+File name: blockcoach-client-0.61.0+1.21.11.jar
 Release type: Alpha
 Game version: 1.21.11
 Mod loader: Fabric

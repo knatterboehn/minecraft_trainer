@@ -3,7 +3,7 @@
   "slug": "blockcoach",
   "tagline": "Level up your fights.",
   "summary": "A gamified Minecraft Java coaching mod for Fabric that connects safe local gameplay events to the BlockCoach dashboard.",
-  "version": "0.60.0",
+  "version": "0.61.0",
   "minecraftVersion": "1.21.11",
   "loader": "fabric",
   "environment": "client",
@@ -11,12 +11,12 @@
   "serverSide": "unsupported",
   "license": "MIT",
   "modId": "blockcoach_client",
-  "artifactName": "blockcoach-client-0.60.0+1.21.11.jar",
+  "artifactName": "blockcoach-client-0.61.0+1.21.11.jar",
   "projectType": "mod",
   "releaseChannel": "alpha",
   "platforms": {
     "githubReleases": {
-      "status": "prepared",
+      "status": "automated-alpha-ready",
       "recommendedFirstRelease": true
     },
     "modrinth": {
@@ -70,6 +70,9 @@
     "docs/modrinth.md",
     "docs/curseforge.md",
     "docs/github-release-checklist.md",
-    "fabric-mod/blockcoach-client/LICENSE"
+    "fabric-mod/blockcoach-client/LICENSE",
+    "docs/release-notes-alpha-template.md",
+    "docs/alpha-test-checklist.md",
+    ".github/workflows/fabric-release.yml"
   ]
 }
