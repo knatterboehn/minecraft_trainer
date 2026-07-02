@@ -1,0 +1,9 @@
+{
+  "name": "minecraft-trainer",
+  "version": "0.45.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/main.js"
+  }
+}
