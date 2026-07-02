@@ -3,6 +3,7 @@ import { calculateXpBreakdown, getWinrate } from '../../domain/progress.js';
 import { getStreakMessage } from '../../domain/questStatus.js';
 import { escapeHtml } from '../html.js';
 import { art } from '../assets.js';
+import { getBridgeStatus } from '../../integrations/minecraftBridgeAdapter.js';
 
 const issues = [
   { value: 'Aim', label: '🎯 Aim' },
@@ -62,6 +63,7 @@ function renderSummary(state) {
 export function renderTraining(state) {
   const quest = state.todayTraining.quest;
   const session = state.todayTraining.activeSession;
+  const bridgeStatus = getBridgeStatus(state);
   const summary = renderSummary(state);
   if (summary) return `<div class="screen">${summary}</div>`;
 
@@ -85,7 +87,7 @@ export function renderTraining(state) {
                 <h3>Starte erst, wenn Minecraft offen ist.</h3>
                 <p>Die App bleibt neben dem Spiel. Du loggst nur Fights und Bonus-Erfolge.</p>
               </div>
-              <span class="tag accent">Manuell</span>
+              <span class="tag ${bridgeStatus.connected ? 'good' : 'accent'}">${bridgeStatus.connected ? 'Live bereit' : 'Manueller Backup'}</span>
             </div>
             <div class="exercise-list">
               ${quest.hints.map((hint) => `
@@ -112,9 +114,14 @@ export function renderTraining(state) {
             </div>
             <div class="card compact cinematic-status">
               <div>
-                <p class="eyebrow">Datenquelle</p>
-                <h3>Manueller Modus</h3>
-                <p>Live-Integration ist vorbereitet, aber nicht verbunden. Keine Fake-Daten.</p>
+                <p class="eyebrow">BlockCoach Live</p>
+                <h3>${escapeHtml(bridgeStatus.label)}</h3>
+                <p>${escapeHtml(bridgeStatus.detail)}</p>
+                <div class="tag-row mt-4">
+                  <span class="tag ${bridgeStatus.connected ? 'good' : 'warn'}">${bridgeStatus.connected ? '● Live bereit' : '● Manuell'}</span>
+                  ${bridgeStatus.server ? `<span class="tag accent">${escapeHtml(bridgeStatus.server)}</span>` : ''}
+                </div>
+                <div class="hero-actions mt-4"><button class="btn ghost" type="button" data-action="check-bridge">Bridge prüfen</button></div>
               </div>
               <div class="status-visual" aria-hidden="true">${art('platform')}</div>
             </div>
@@ -147,9 +154,10 @@ export function renderTraining(state) {
             <div>
               <p class="eyebrow">⚔️ Fight Log</p>
               <h3>Nach jedem Fight ein Klick.</h3>
-              <p>Logge nur, was wirklich passiert ist. Schnell, ohne aus Minecraft rauszufallen.</p>
+              <p>${bridgeStatus.connected ? 'Live-Events zählen automatisch. Manuelle Buttons bleiben zum Korrigieren da.' : 'Logge nur, was wirklich passiert ist. Schnell, ohne aus Minecraft rauszufallen.'}</p>
             </div>
             <span class="tag ${targetReached ? 'good' : 'accent'}">${escapeHtml(`${session.fights} / ${session.targetFights}`)}</span>
+            <span class="tag ${bridgeStatus.connected ? 'good' : 'warn'}">${bridgeStatus.connected ? 'Live' : 'Manuell'}</span>
           </div>
           <div class="progress-track mt-4" aria-label="Fight-Fortschritt"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
           <section class="grid grid-3 mt-5">

@@ -1,6 +1,7 @@
 import { SKILLS, SERVERS, DIFFICULTIES } from '../../state/defaults.js';
 import { escapeHtml } from '../html.js';
 import { art } from '../assets.js';
+import { BRAND_NAME, BRAND_TAGLINE, BRAND_DISCLAIMER } from '../../brand.js';
 
 function options(items, selected) {
   return items.map((item) => `<option value="${escapeHtml(item)}" ${item === selected ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
@@ -11,9 +12,9 @@ export function renderOnboarding(state) {
     <main class="onboarding-wrap">
       <section class="onboarding">
         <div class="hero-copy">
-          <p class="eyebrow">Minecraft Trainer</p>
-          <h1>Dein PvP wird messbar.</h1>
-          <p>Daily Quest spielen, Fights loggen und Fortschritt sehen. Später vorbereitet für echte Minecraft-Daten.</p>
+          <p class="eyebrow">${escapeHtml(BRAND_NAME)}</p>
+          <h1>${escapeHtml(BRAND_TAGLINE)}</h1>
+          <p>Daily Quests, XP, Streaks und echtes Fight-Feedback. Live-Integration vorbereitet, manueller Modus bleibt Backup.</p>
           <div class="intro-art" aria-hidden="true">${art('platform')}</div>
         </div>
 
@@ -22,7 +23,7 @@ export function renderOnboarding(state) {
             <div>
               <p class="eyebrow">Spielerprofil</p>
               <h2>Startdaten</h2>
-              <p>Nur die Daten, die deine Daily Quest wirklich braucht.</p>
+              <p>Nur die Daten, die deine Daily Quest wirklich braucht. ${escapeHtml(BRAND_DISCLAIMER)}</p>
             </div>
           </div>
           <div class="form-grid mt-5">
@@ -48,7 +49,7 @@ export function renderOnboarding(state) {
             </div>
           </div>
           <div class="form-actions">
-            <button class="btn primary" type="submit">Trainer starten</button>
+            <button class="btn primary" type="submit">BlockCoach starten</button>
           </div>
         </form>
       </section>

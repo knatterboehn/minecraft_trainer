@@ -5,6 +5,7 @@ import { renderProgress } from './screens/progress.js';
 import { renderAnalysis } from './screens/analysis.js';
 import { renderProfile } from './screens/profile.js';
 import { escapeHtml } from './html.js';
+import { BRAND_NAME, BRAND_TAGLINE } from '../brand.js';
 
 const screens = {
   onboarding: renderOnboarding,
@@ -31,8 +32,8 @@ function renderTopbar(state) {
         <div class="brand">
           <div class="brand-mark" aria-hidden="true"><span></span></div>
           <div class="brand-copy">
-            <p class="eyebrow">Minecraft Trainer</p>
-            <h1>${escapeHtml(state.user.name || 'Trainer')}</h1>
+            <p class="eyebrow">${escapeHtml(BRAND_NAME)}</p>
+            <h1>${escapeHtml(state.user.name || BRAND_TAGLINE)}</h1>
           </div>
         </div>
         <nav class="nav" aria-label="Hauptnavigation">

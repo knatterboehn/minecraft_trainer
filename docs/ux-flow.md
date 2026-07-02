@@ -1,57 +1,61 @@
-# UX Flow - Minecraft Trainer
+# UX Flow - BlockCoach
+
+**Subline:** Level up your fights.
 
 ## Nutzerrolle
 
-Minecraft-Spieler zwischen 10 und 18 Jahren, der besser werden will, Challenges mag und nicht viel Zeit mit Formularen verbringen möchte.
+Minecraft-Java-Spieler zwischen 10 und 18 Jahren, der besser werden will, Challenges mag und nicht viel Zeit mit Formularen verbringen möchte.
 
-## Designregel
+## Produktkern
 
-Das originale Premium-Gaming-UI bleibt die visuelle Basis. Neue Logik wird nur so ergänzt, dass sie in den vorhandenen Look passt.
+BlockCoach ist ein gamifizierter Assistenztrainer. Er soll nicht nur Daten sammeln, sondern Trainingseffekt erzeugen:
 
-## Kernkonzepte
+```text
+Gameplay beobachten
+→ Muster erkennen
+→ passende Daily Quest spielen
+→ XP, Streak und Bonus erhalten
+→ nächste Quest wird nützlicher
+```
 
-### 🎯 Daily Quest
-Die konkrete Aufgabe für heute.
+## Design-Freeze
 
-Beispiel: Spiele 5 Sword-PvP-Fights auf PvPClub. Fokus: nicht blind W-keyen. Bonus: 3 bewusste Abstand-Resets.
+Das visuelle Original-UI bleibt die Basis. Neue Features werden in bestehende Cards, Statusflächen und Quest-Logik integriert, nicht als komplett neue UI-Welt.
 
-### ⚔️ Fight Log
-Schnelle Erfassung nach jedem Fight.
+## Core Concepts
 
-Aktionen: + Win, + Loss, + Trainingsfight, Undo.
+1. **Daily Quest** - heutiger Trainingsauftrag
+2. **Fight Log** - Fight-Ergebnisse manuell oder später automatisch
+3. **Bonus Challenge** - Extra-Ziel für XP
+4. **Quest-Verlauf** - erledigte Quests
+5. **Nächster Fokus** - was besser werden soll
+6. **BlockCoach Live** - echter Minecraft-Event-Eingang, kein Fake-Live
 
-### 💎 Bonus Challenge
-Ein messbarer Zusatzauftrag innerhalb der Daily Quest.
+## Flow heute
 
-Beispiel: 0 / 3 Erfolge. Bonus-XP nur, wenn das Ziel erreicht ist.
+1. Dashboard öffnen.
+2. Daily Quest verstehen.
+3. Quest starten, wenn Minecraft bereit ist.
+4. Fights loggen oder Live-Events übernehmen lassen.
+5. Bonus Challenge tracken.
+6. Kurz-Review wählen.
+7. Quest abschließen.
+8. XP, Streak, Bonus und Quest-Verlauf sehen.
 
-### 📈 Fortschritt
-Belohnung und Verlauf nach dem Abschluss.
+## Live-Modus-Regel
 
-Zeigt XP, Level, Rang, Streak, Fights, Winrate und Quest-Verlauf.
+Die App darf nur Live-Zustände zeigen, wenn echte Bridge-Events empfangen wurden.
 
-## Daily Loop
+- Ohne Bridge: manueller Backup-Modus.
+- Mit Bridge: Live-Status + Event-Inbox.
+- Mit aktiver Quest: sichere Bridge-Events werden zu GameEvents.
+- Ohne aktive Quest: Live-Events bleiben in der Inbox und verändern keine Quest.
 
-1. Dashboard: Daily Quest verstehen.
-2. Quest starten, wenn Minecraft bereit ist.
-3. Nach jedem Fight genau einen Button klicken.
-4. Bonus-Erfolg tracken, wenn er im Fight passiert ist.
-5. Einen Kurz-Fokus wählen: Aim, Movement, Positioning, Decision, Panic oder Weiß nicht.
-6. Quest abschließen.
-7. Ergebnis sehen: XP, Bonus, Streak, nächster Fokus.
-8. Dashboard zeigt: Heute erledigt.
+## Nicht-Ziele
 
-## Gamification-Regeln
-
-- ✅ Eine abgeschlossene Quest muss sichtbar erledigt wirken.
-- 🔥 Streak ist entweder „heute sichern“ oder „gesichert“.
-- 💎 Bonus Challenge wird erst belohnt, wenn das Ziel erreicht ist.
-- ⭐ XP wird nach Abschluss klar gezeigt.
-- 📅 Der Quest-Verlauf zeigt erledigte Tage und gespeicherte Quests.
-
-## Was bewusst nicht zentral ist
-
-- Timer: später optional, aber nicht Kernfortschritt.
-- Lange Auswertung: nur kurzer nächster Fokus.
-- Große To-do-Listen: Fokus-Hinweise statt Hausaufgaben-Gefühl.
-- Fake-Live-Modus: erst anzeigen, wenn echte Bridge existiert.
+- Kein Cheat.
+- Kein Auto-Aim.
+- Kein Auto-Klick.
+- Keine Gegner-Markierung.
+- Keine Fake-Daten.
+- Keine neuen Modus-Menüs, die den Daily Loop verkomplizieren.

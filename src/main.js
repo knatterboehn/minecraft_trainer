@@ -1,11 +1,27 @@
-import { getState, subscribe, patchState, dispatchEvent, resetApp, exportApp, importApp } from './state/store.js';
+import { getState, subscribe, patchState, dispatchEvent, dispatchBridgeEvent, resetApp, exportApp, importApp } from './state/store.js';
 import { createDailyQuest } from './domain/quest.js';
 import { createEvent, EVENT_TYPES } from './domain/gameEvents.js';
 import { renderApp } from './ui/render.js';
+import { connectBridge, BRIDGE_STATUS } from './integrations/minecraftBridgeAdapter.js';
 
 const root = document.querySelector('#app');
 const toast = document.querySelector('#toast');
 let toastTimer = null;
+
+const bridgeConnection = connectBridge({
+  onEvent(rawEvent) {
+    const nextState = dispatchBridgeEvent(rawEvent);
+    const latest = nextState.integrations?.minecraftBridge?.inbox?.[0];
+    if (latest?.mapped) showToast(`Live übernommen: ${latest.label}`);
+  },
+  onStatus(statusEvent) {
+    const nextState = dispatchBridgeEvent(statusEvent);
+    const label = nextState.integrations?.minecraftBridge?.status === BRIDGE_STATUS.ERROR
+      ? 'Bridge nicht erreichbar. Manueller Modus bleibt aktiv.'
+      : 'Bridge-Status aktualisiert.';
+    showToast(label);
+  }
+});
 
 function showToast(message) {
   toast.textContent = message;
@@ -83,6 +99,10 @@ root.addEventListener('click', (event) => {
   const action = actionButton.dataset.action;
 
   if (action === 'start-quest') startQuest();
+  if (action === 'check-bridge') {
+    bridgeConnection.check();
+    showToast('Bridge wird geprüft. Manueller Modus bleibt aktiv.');
+  }
   if (action === 'fight-win') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_WIN, { source: 'manual' }));
   if (action === 'fight-loss') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_LOSS, { source: 'manual' }));
   if (action === 'fight-training') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_TRAINING, { source: 'manual' }));
@@ -100,7 +120,7 @@ root.addEventListener('click', (event) => {
     showToast('✅ Quest abgeschlossen. XP gespeichert.');
   }
   if (action === 'export-data') {
-    download('minecraft-trainer-export.json', exportApp());
+    download('blockcoach-export.json', exportApp());
     showToast('Export erstellt.');
   }
   if (action === 'reset-app') {

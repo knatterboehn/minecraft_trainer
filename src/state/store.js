@@ -3,6 +3,7 @@ import { normalizeApp } from './normalize.js';
 import { recomputeProgress } from '../domain/progress.js';
 import { deriveAnalysis } from '../domain/analysis.js';
 import { applyGameEvent } from '../domain/gameEvents.js';
+import { ingestBridgeEvent } from '../integrations/minecraftBridgeAdapter.js';
 
 let state = normalizeApp(readRawState());
 const listeners = new Set();
@@ -51,14 +52,24 @@ export function patchState(mutator) {
   return state;
 }
 
-export function dispatchEvent(event) {
-  applyGameEvent(state, event);
+function finalizeState() {
   recomputeProgress(state);
   state.analysis = deriveAnalysis(state.history);
   state = normalizeApp(state);
   persist();
   notify();
   return state;
+}
+
+export function dispatchEvent(event) {
+  applyGameEvent(state, event);
+  return finalizeState();
+}
+
+export function dispatchBridgeEvent(rawBridgeEvent) {
+  const mappedEvents = ingestBridgeEvent(state, rawBridgeEvent);
+  for (const mappedEvent of mappedEvents) applyGameEvent(state, mappedEvent);
+  return finalizeState();
 }
 
 export function resetApp() {

@@ -1,6 +1,7 @@
 import { createDailyQuest } from '../domain/quest.js';
+import { createDefaultBridgeState } from '../integrations/minecraftBridgeAdapter.js';
 
-export const APP_VERSION = '0.51';
+export const APP_VERSION = '0.52';
 export const STORAGE_KEY = 'minecraftTrainerApp';
 
 export const SKILLS = ['Sword PvP', 'Bow', 'Mace', 'UHC', 'Bedwars', 'Allround'];
@@ -58,6 +59,9 @@ export function createDefaultApp() {
       nextFocus: 'Starte deine erste Daily Quest.'
     },
     history: [],
-    events: []
+    events: [],
+    integrations: {
+      minecraftBridge: createDefaultBridgeState()
+    }
   };
 }

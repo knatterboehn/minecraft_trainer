@@ -1,11 +1,12 @@
 {
-  "name": "minecraft-trainer",
-  "version": "0.51.0",
+  "name": "blockcoach",
+  "version": "0.52.0",
   "private": true,
   "type": "module",
   "scripts": {
     "check": "node scripts/syntax-check.mjs",
-    "test": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/e2e-user-flow-test.mjs",
-    "test:e2e": "node scripts/e2e-user-flow-test.mjs"
+    "test": "node scripts/smoke-test.mjs && node scripts/regression-test.mjs && node scripts/bridge-integration-test.mjs && node scripts/e2e-user-flow-test.mjs",
+    "test:e2e": "node scripts/e2e-user-flow-test.mjs",
+    "test:bridge": "node scripts/bridge-integration-test.mjs"
   }
 }

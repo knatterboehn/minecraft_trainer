@@ -279,7 +279,7 @@ async function loadAppInBlankPage(client) {
   const bootstrap = `
     (async () => {
       document.open();
-      document.write(${JSON.stringify(`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Minecraft Trainer E2E</title><style>${css}</style></head><body><div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div></body></html>`)});
+      document.write(${JSON.stringify(`<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BlockCoach E2E</title><style>${css}</style></head><body><div id="app"></div><div id="toast" class="toast" role="status" aria-live="polite"></div></body></html>`)});
       document.close();
 
       const storage = new Map();
@@ -333,20 +333,20 @@ async function loadAppInBlankPage(client) {
       }
 
       await import(moduleUrl('src/main.js'));
-      window.__minecraftTrainerE2EReady = true;
+      window.__blockCoachE2EReady = true;
     })().catch((error) => {
-      window.__minecraftTrainerE2EError = error.stack || error.message || String(error);
+      window.__blockCoachE2EError = error.stack || error.message || String(error);
       throw error;
     });
   `;
 
   await evalJs(client, bootstrap);
-  await waitForCondition(client, 'window.__minecraftTrainerE2EReady === true', 'App aus Modulquellen geladen');
+  await waitForCondition(client, 'window.__blockCoachE2EReady === true', 'App aus Modulquellen geladen');
 }
 
 async function run() {
   const debugPort = 43000 + Math.floor(Math.random() * 1000);
-  const userDataDir = mkdtempSync(join(tmpdir(), 'minecraft-trainer-e2e-'));
+  const userDataDir = mkdtempSync(join(tmpdir(), 'blockcoach-e2e-'));
   const chrome = findExecutable();
 
   const chromeProcess = spawn(chrome, [
@@ -368,15 +368,15 @@ async function run() {
     await client.send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
     await loadAppInBlankPage(client);
 
-    await waitForText(client, 'Dein PvP wird messbar.', 'Onboarding sichtbar');
-    await assertBodyHas(client, ['Trainer starten', 'Startdaten', 'FIGHTS PRO QUEST'], 'Onboarding');
+    await waitForText(client, 'Level up your fights.', 'Onboarding sichtbar');
+    await assertBodyHas(client, ['BlockCoach starten', 'Startdaten', 'FIGHTS PRO QUEST'], 'Onboarding');
     await screenshot(client, '01-onboarding');
 
     await typeInto(client, '#name', 'Vince E2E', 'Name');
     await setSelect(client, '#mainSkill', 'Sword PvP', 'Hauptskill');
     await setSelect(client, '#server', 'PvPClub', 'Server');
     await typeInto(client, '#targetFights', '5', 'Fights pro Quest');
-    await click(client, '[data-form="onboarding"] button[type="submit"]', 'Trainer starten');
+    await click(client, '[data-form="onboarding"] button[type="submit"]', 'BlockCoach starten');
     await waitForText(client, 'Quest starten', 'Dashboard Quest CTA');
     await assertBodyHas(client, ['Daily Quest', '🔥 Streak', '⭐ XP'], 'Dashboard offen');
     await screenshot(client, '02-dashboard-open');
@@ -385,8 +385,13 @@ async function run() {
     await waitForText(client, '⚔️ Fight Log', 'Fight Log sichtbar');
     await assertBodyHas(client, ['Quest läuft', 'Nach jedem Fight ein Klick.', 'Bonus offen', 'Quest abschließen'], 'Training aktiv');
 
-    await clickUntil(client, '[data-action="fight-win"]', `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 1`, 'Win 1 gespeichert');
-    await clickUntil(client, '[data-action="fight-win"]', `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 2`, 'Win 2 gespeichert');
+    await evalJs(client, `window.BlockCoachBridge.receive({ type: 'minecraft_connected', playerName: 'Vince E2E', minecraftVersion: '1.21.1' });`);
+    await evalJs(client, `window.BlockCoachBridge.receive({ type: 'server_joined', server: 'PvPClub' });`);
+    await evalJs(client, `window.BlockCoachBridge.receive({ type: 'fight_result', result: 'win' });`);
+    await waitForCondition(client, `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 1`, 'Bridge Win übernommen');
+    await waitForText(client, 'Live', 'Live-Status nach Bridge-Events sichtbar');
+
+    await clickUntil(client, '[data-action="fight-win"]', `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 2`, 'Manueller Win gespeichert');
     await clickUntil(client, '[data-action="fight-loss"]', `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 3`, 'Loss gespeichert');
     await clickUntil(client, '[data-action="fight-training"]', `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 4`, 'Trainingsfight gespeichert');
 
@@ -434,7 +439,7 @@ async function run() {
 
     await click(client, 'nav [data-screen="profile"]', 'Profil öffnen');
     await waitForText(client, 'Export / Import', 'Profil sichtbar');
-    await assertBodyHas(client, ['App zurücksetzen', 'Fights pro Quest', 'minecraftTrainerApp'], 'Profil');
+    await assertBodyHas(client, ['BlockCoach Live', 'App zurücksetzen', 'Fights pro Quest', 'minecraftTrainerApp'], 'Profil');
 
     await client.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
     await click(client, 'nav [data-screen="progress"]', 'Mobile Fortschritt Nav');
@@ -446,7 +451,7 @@ async function run() {
     assert.deepEqual(client.runtimeExceptions, [], `Runtime Exceptions: ${client.runtimeExceptions.join('\n')}`);
     assert.deepEqual(client.logErrors, [], `Browser-Log-Fehler: ${client.logErrors.join('\n')}`);
 
-    console.log('E2E user-flow test passed: real browser clicks, onboarding, quest loop, completion, progress, analysis, profile and mobile navigation are consistent.');
+    console.log('E2E user-flow test passed: real browser clicks, onboarding, bridge event ingestion, quest loop, completion, progress, analysis, profile and mobile navigation are consistent.');
   } finally {
     await client?.close();
     chromeProcess.kill('SIGTERM');

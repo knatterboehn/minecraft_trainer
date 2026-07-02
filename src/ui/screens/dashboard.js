@@ -19,7 +19,7 @@ export function renderDashboard(state) {
   const quest = state.todayTraining.quest;
   const progress = state.progress;
   const winrate = getWinrate(progress.wins, progress.losses);
-  const status = getBridgeStatus();
+  const status = getBridgeStatus(state);
   const xpToNext = 500 - (progress.xp % 500 || 0);
   const hasHistory = state.history.length > 0;
   const active = state.todayTraining.activeSession;
@@ -143,11 +143,16 @@ export function renderDashboard(state) {
 
         <aside class="card compact cinematic-status">
           <div>
-            <p class="eyebrow">${questState === 'completed' ? '✅ Tagesstatus' : 'Datenquelle'}</p>
-            <h3>${escapeHtml(questState === 'completed' ? 'Streak gesichert' : status.connected ? 'Live verbunden' : 'Manueller Modus')}</h3>
-            <p>${escapeHtml(questState === 'completed' ? 'Deine heutige Quest ist gespeichert. Extra-Fights sind optional.' : status.detail || 'Aktuell läuft die App im manuellen Modus. Keine Live-Daten werden vorgetäuscht.')}</p>
-            <div class="mt-4">
+            <p class="eyebrow">${questState === 'completed' ? '✅ Tagesstatus' : 'BlockCoach Live'}</p>
+            <h3>${escapeHtml(questState === 'completed' ? 'Streak gesichert' : status.label)}</h3>
+            <p>${escapeHtml(questState === 'completed' ? 'Deine heutige Quest ist gespeichert. Extra-Fights sind optional.' : status.detail)}</p>
+            <div class="tag-row mt-4">
+              <span class="tag ${status.connected ? 'good' : 'warn'}">${status.connected ? '● Live bereit' : '● Manueller Backup'}</span>
+              ${status.server ? `<span class="tag accent">${escapeHtml(status.server)}</span>` : ''}
+            </div>
+            <div class="hero-actions mt-4">
               <button class="btn" type="button" data-screen="${questState === 'completed' ? 'progress' : 'training'}">${questState === 'completed' ? 'Fortschritt öffnen →' : 'Zur Quest →'}</button>
+              ${questState === 'completed' ? '' : '<button class="btn ghost" type="button" data-action="check-bridge">Bridge prüfen</button>'}
             </div>
           </div>
           <div class="status-visual" aria-hidden="true">${art(questState === 'completed' ? 'laugh' : hasHistory ? 'laugh' : 'sleep')}</div>

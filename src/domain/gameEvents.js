@@ -67,7 +67,20 @@ function recalcSession(session) {
   return session;
 }
 
+const SESSION_EVENT_TYPES = new Set([
+  EVENT_TYPES.FIGHT_WIN,
+  EVENT_TYPES.FIGHT_LOSS,
+  EVENT_TYPES.FIGHT_TRAINING,
+  EVENT_TYPES.FIGHT_UNDO,
+  EVENT_TYPES.CHALLENGE_SUCCESS,
+  EVENT_TYPES.CHALLENGE_DECREMENT,
+  EVENT_TYPES.REVIEW_SET,
+  EVENT_TYPES.NOTES_SET,
+  EVENT_TYPES.QUEST_FINISHED
+]);
+
 export function applyGameEvent(app, event) {
+  if (!event || typeof event !== 'object') return app;
   app.events.push(event);
 
   if (event.type === EVENT_TYPES.QUEST_STARTED) {
@@ -75,19 +88,23 @@ export function applyGameEvent(app, event) {
     return app;
   }
 
-  if (event.type === EVENT_TYPES.QUEST_FINISHED && !app.todayTraining.activeSession) {
-    app.ui.lastSummaryId = null;
+  if (!SESSION_EVENT_TYPES.has(event.type)) return app;
+
+  if (!app.todayTraining.activeSession) {
+    if (event.type === EVENT_TYPES.QUEST_FINISHED) app.ui.lastSummaryId = null;
     return app;
   }
 
-  const session = ensureSession(app);
+  const session = app.todayTraining.activeSession;
 
   if (event.type === EVENT_TYPES.FIGHT_WIN || event.type === EVENT_TYPES.FIGHT_LOSS || event.type === EVENT_TYPES.FIGHT_TRAINING) {
     const result = event.type === EVENT_TYPES.FIGHT_WIN ? 'win' : event.type === EVENT_TYPES.FIGHT_LOSS ? 'loss' : 'training';
     session.fightEvents.push({
       id: event.id,
       result,
-      createdAt: event.createdAt
+      createdAt: event.createdAt,
+      source: event.source || event.payload?.source || 'manual',
+      bridgeEventId: event.payload?.bridgeEventId || null
     });
     recalcSession(session);
   }

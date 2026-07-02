@@ -2,6 +2,7 @@ import { APP_VERSION, createDefaultApp, SKILLS, SERVERS, DIFFICULTIES, THEMES, t
 import { createDailyQuest } from '../domain/quest.js';
 import { recomputeProgress } from '../domain/progress.js';
 import { deriveAnalysis } from '../domain/analysis.js';
+import { normalizeBridgeState } from '../integrations/minecraftBridgeAdapter.js';
 
 function safeString(value, fallback = '') {
   const text = typeof value === 'string' ? value.trim() : '';
@@ -68,7 +69,9 @@ function normalizeActiveSession(entry, quest, today) {
         .map((fight, index) => ({
           id: safeString(fight.id, `fight-${date}-${index}`),
           result: fight.result,
-          createdAt: safeString(fight.createdAt, '')
+          createdAt: safeString(fight.createdAt, ''),
+          source: safeString(fight.source, 'manual'),
+          bridgeEventId: safeString(fight.bridgeEventId, '') || null
         }))
     : [];
 
@@ -140,6 +143,9 @@ export function normalizeApp(raw) {
 
   base.history = Array.isArray(source.history) ? source.history.map(normalizeSession).filter(Boolean) : [];
   base.events = Array.isArray(source.events) ? source.events.filter((event) => event && typeof event === 'object') : [];
+  base.integrations = {
+    minecraftBridge: normalizeBridgeState(source.integrations?.minecraftBridge)
+  };
 
   recomputeProgress(base);
   base.analysis = deriveAnalysis(base.history);

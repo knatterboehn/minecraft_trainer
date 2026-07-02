@@ -1,12 +1,50 @@
 import { SKILLS, SERVERS, DIFFICULTIES, THEMES, STORAGE_KEY } from '../../state/defaults.js';
+import { getBridgeStatus, DEFAULT_BRIDGE_URL, BRIDGE_CONTRACT_VERSION } from '../../integrations/minecraftBridgeAdapter.js';
 import { escapeHtml } from '../html.js';
 import { art } from '../assets.js';
+import { BRAND_DISCLAIMER } from '../../brand.js';
 
 function options(items, selected) {
   return items.map((item) => `<option value="${escapeHtml(item)}" ${item === selected ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
 }
 
+function formatTime(value) {
+  if (!value) return 'Noch kein Event';
+  try { return new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date(value)); }
+  catch { return String(value); }
+}
+
+function renderBridgeInbox(bridge) {
+  if (!bridge.inbox.length) {
+    return `
+      <div class="empty-state with-art mt-4">
+        <div class="state-art" aria-hidden="true">${art('sleep')}</div>
+        <div><strong>Noch keine Live-Events.</strong><span class="notice-note">Starte später die Local Bridge. Bis dahin bleibt der manuelle Modus aktiv.</span></div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="history-list mt-4">
+      ${bridge.inbox.slice(0, 5).map((entry) => `
+        <article class="history-item bridge-event-item">
+          <div>
+            <strong>${escapeHtml(entry.mapped ? '✅ ' : '• ')}${escapeHtml(entry.label)}</strong>
+            <div class="history-meta">
+              <span class="tag ${entry.mapped ? 'good' : 'warn'}">${entry.mapped ? 'Quest-Event' : 'Inbox'}</span>
+              <span class="tag">${escapeHtml(entry.type)}</span>
+              <span class="tag">${escapeHtml(formatTime(entry.createdAt))}</span>
+            </div>
+            <p>${escapeHtml(entry.detail)}</p>
+          </div>
+        </article>
+      `).join('')}
+    </div>
+  `;
+}
+
 export function renderProfile(state) {
+  const bridge = getBridgeStatus(state);
   return `
     <div class="screen">
       <section class="section-head">
@@ -51,12 +89,30 @@ export function renderProfile(state) {
               <select id="profileTheme" name="theme">${options(THEMES, state.settings.theme)}</select>
             </div>
           </div>
+          <div class="notice mt-4">
+            <div><strong>Hinweis:</strong> ${escapeHtml(BRAND_DISCLAIMER)}</div>
+          </div>
           <div class="form-actions">
             <button class="btn primary" type="submit">Änderungen speichern</button>
           </div>
         </form>
 
         <aside class="grid">
+          <div class="card">
+            <p class="eyebrow">BlockCoach Live</p>
+            <h3>${escapeHtml(bridge.label)}</h3>
+            <p>${escapeHtml(bridge.detail)}</p>
+            <div class="card-art" aria-hidden="true">${art(bridge.connected ? 'reward' : 'platform')}</div>
+            <div class="tag-row mt-4">
+              <span class="tag ${bridge.connected ? 'good' : 'warn'}">${bridge.connected ? '● Live bereit' : '● Manueller Backup'}</span>
+              <span class="tag">${escapeHtml(BRIDGE_CONTRACT_VERSION)}</span>
+              <span class="tag">${escapeHtml(bridge.url || DEFAULT_BRIDGE_URL)}</span>
+            </div>
+            <div class="hero-actions mt-4">
+              <button class="btn" type="button" data-action="check-bridge">Bridge prüfen</button>
+            </div>
+            ${renderBridgeInbox(bridge)}
+          </div>
           <div class="card">
             <p class="eyebrow">Daten</p>
             <h3>Export / Import</h3>
