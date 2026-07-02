@@ -61,7 +61,10 @@ window.dispatchEvent(new CustomEvent('blockcoach:bridge-event', { detail: { type
 
 This API is an input channel for local tests. It does not create fake live data by itself.
 
-## Status events
+## Status and profile events
+
+The Fabric client sends the Minecraft account name as `playerName` and the server as `server`. The web app stores them in the Bridge state and uses them to prefill the BlockCoach profile when the user has not entered custom data yet.
+
 
 ```json
 { "type": "bridge_status", "status": "bridge_detected" }

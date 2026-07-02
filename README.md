@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.62** ergänzt die Alpha-Release-Automation: Ein Tag wie `v0.62.0-alpha` kann automatisch Web-Tests, Browser-E2E, Fabric-Build und einen GitHub-Prerelease mit `.jar`-Asset auslösen.
+**Version 0.63** ergänzt Vinces Alpha-Wunsch: Die installierte Mod zeigt einen **BlockCoach-Eintrag im Minecraft-Startmenü**. Außerdem übernimmt die Web-App Minecraft-Name und Server automatisch aus echten Mod-/Bridge-Events.
 
 ## Produktprinzip
 
@@ -64,6 +64,10 @@ Vorhanden:
 - `tools/local-bridge/emit.mjs`
 - `fabric-mod/blockcoach-client/`
 - Local Bridge mit HTTP Health, HTTP POST und WebSocket-Broadcast
+- Fabric-Client-Prototyp mit Minecraft-Startmenü-Eintrag `BlockCoach`
+- automatische Profilübernahme aus Live-Events:
+  - Minecraft-Name aus `minecraft_connected`
+  - Server aus `server_joined`
 - Fabric-Client-Prototyp für sichere Client-Events:
   - `minecraft_connected`
   - `server_joined`
@@ -129,7 +133,7 @@ npm run ci:fabric   # Fabric Resolver + Preflight + Gradle Build
 Nach erfolgreichem Fabric-Build heißt das Workflow-Artefakt:
 
 ```text
-blockcoach-client-0.62.0-minecraft-1.21.11
+blockcoach-client-0.63.0-minecraft-1.21.11
 ```
 
 ### Alpha Release Workflow
@@ -141,7 +145,7 @@ blockcoach-client-0.62.0-minecraft-1.21.11
 Der Release-Workflow läuft bei Tags wie:
 
 ```text
-v0.62.0-alpha
+v0.63.0-alpha
 ```
 
 Er baut die Web-App-Checks, den Browser-E2E-Test und die Fabric-JAR erneut. Danach erstellt er einen GitHub-Prerelease und hängt die `.jar` an.
@@ -200,7 +204,7 @@ Für Alpha-Tester nach einem erfolgreichen Release:
 1. Minecraft Java 1.21.11 installieren
 2. Fabric Loader installieren
 3. Fabric API installieren, falls benötigt
-4. blockcoach-client-0.62.0+1.21.11.jar in den mods-Ordner legen
+4. blockcoach-client-0.63.0+1.21.11.jar in den mods-Ordner legen
 5. npm run bridge starten
 6. BlockCoach Web-App öffnen
 7. Minecraft mit Fabric starten

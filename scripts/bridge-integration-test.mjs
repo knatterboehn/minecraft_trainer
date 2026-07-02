@@ -32,19 +32,21 @@ assert.equal(normalized.counters.received, 0);
 assert.equal(normalized.inbox.length, 1);
 
 const app = createDefaultApp();
-app.user.name = 'Vince';
+app.user.name = '';
 app.ui.screen = 'dashboard';
 
-let mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.MINECRAFT_CONNECTED, playerName: 'Vince', minecraftVersion: '1.21.11' });
+let mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.MINECRAFT_CONNECTED, playerName: 'VinceMC', minecraftVersion: '1.21.11' });
 assert.equal(mapped.length, 0);
 assert.equal(app.integrations.minecraftBridge.status, BRIDGE_STATUS.MINECRAFT_CONNECTED);
-assert.equal(app.integrations.minecraftBridge.playerName, 'Vince');
+assert.equal(app.integrations.minecraftBridge.playerName, 'VinceMC');
+assert.equal(app.user.name, 'VinceMC');
 assert.match(getBridgeStatus(app).detail, /Minecraft läuft/);
 
-mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.SERVER_JOINED, server: 'PvPClub' });
+mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.SERVER_JOINED, server: 'play.pvpclub.example' });
 assert.equal(mapped.length, 0);
 assert.equal(app.integrations.minecraftBridge.status, BRIDGE_STATUS.SERVER_DETECTED);
-assert.equal(app.integrations.minecraftBridge.server, 'PvPClub');
+assert.equal(app.integrations.minecraftBridge.server, 'play.pvpclub.example');
+assert.equal(app.user.server, 'play.pvpclub.example');
 
 // Without an active quest, live fight events stay in the inbox and do not mutate quest progress.
 mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.FIGHT_RESULT, result: 'win' });
@@ -82,8 +84,8 @@ assert.equal(app.integrations.minecraftBridge.inbox[0].label, 'Hotbar gewechselt
 app.ui.screen = 'profile';
 const html = renderApp(app);
 assert.match(html, /BlockCoach Live/);
-assert.match(html, /PvPClub/);
+assert.match(html, /play\.pvpclub\.example/);
 assert.match(html, /Hotbar gewechselt/);
 assert.doesNotMatch(html, /undefined|NaN|\[object Object\]/);
 
-console.log('Bridge integration tests passed: status states, inbox, no fake live, and active-quest event mapping are consistent.');
+console.log('Bridge integration tests passed: status states, live player/server profile sync, inbox, no fake live, and active-quest event mapping are consistent.');

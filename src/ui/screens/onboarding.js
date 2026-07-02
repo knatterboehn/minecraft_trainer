@@ -2,12 +2,17 @@ import { SKILLS, SERVERS, DIFFICULTIES } from '../../state/defaults.js';
 import { escapeHtml } from '../html.js';
 import { art } from '../assets.js';
 import { BRAND_NAME, BRAND_TAGLINE, BRAND_DISCLAIMER } from '../../brand.js';
+import { getBridgeStatus } from '../../integrations/minecraftBridgeAdapter.js';
 
 function options(items, selected) {
-  return items.map((item) => `<option value="${escapeHtml(item)}" ${item === selected ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
+  const normalized = String(selected || '');
+  const optionItems = normalized && !items.includes(normalized) ? [normalized, ...items] : items;
+  return optionItems.map((item) => `<option value="${escapeHtml(item)}" ${item === normalized ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
 }
 
 export function renderOnboarding(state) {
+  const bridge = getBridgeStatus(state);
+  const liveDetected = bridge.playerName || bridge.server;
   return `
     <main class="onboarding-wrap">
       <section class="onboarding">
@@ -26,6 +31,11 @@ export function renderOnboarding(state) {
               <p>Nur die Daten, die deine Daily Quest wirklich braucht. ${escapeHtml(BRAND_DISCLAIMER)}</p>
             </div>
           </div>
+          ${liveDetected ? `
+            <div class="notice mt-4">
+              <div><strong>Live erkannt:</strong> ${escapeHtml(bridge.playerName || 'Spieler noch unbekannt')}${bridge.server ? ` · Server: ${escapeHtml(bridge.server)}` : ''}</div>
+            </div>
+          ` : ''}
           <div class="form-grid mt-5">
             <div class="field">
               <label for="name">Name</label>

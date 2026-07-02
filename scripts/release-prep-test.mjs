@@ -24,7 +24,7 @@ const metadata = JSON.parse(readFileSync('docs/mod-release-metadata.json', 'utf8
 assert.equal(metadata.projectName, 'BlockCoach');
 assert.equal(metadata.slug, 'blockcoach');
 assert.equal(metadata.tagline, 'Level up your fights.');
-assert.equal(metadata.version, '0.62.0');
+assert.equal(metadata.version, '0.63.0');
 assert.equal(metadata.minecraftVersion, '1.21.11');
 assert.equal(metadata.loader, 'fabric');
 assert.equal(metadata.environment, 'client');
@@ -33,7 +33,7 @@ assert.equal(metadata.serverSide, 'unsupported');
 assert.equal(metadata.license, 'MIT');
 assert.equal(metadata.modId, 'blockcoach_client');
 assert.equal(metadata.releaseChannel, 'alpha');
-assert.match(metadata.artifactName, /blockcoach-client-0\.62\.0\+1\.21\.11\.jar/);
+assert.match(metadata.artifactName, /blockcoach-client-0\.63\.0\+1\.21\.11\.jar/);
 assert.equal(metadata.platforms.githubReleases.status, 'automated-alpha-ready');
 assert.equal(metadata.platforms.modrinth.status, 'prepared');
 assert.equal(metadata.platforms.curseforge.status, 'prepared');
@@ -48,9 +48,9 @@ assert.ok(metadata.requiredReleaseFiles.includes('docs/alpha-test-checklist.md')
 assert.ok(metadata.requiredReleaseFiles.includes('.github/workflows/fabric-release.yml'));
 
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
-assert.equal(packageJson.version, '0.62.0');
-assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0.62'/);
-assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.62\.0/);
+assert.equal(packageJson.version, '0.63.0');
+assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0.63'/);
+assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.63\.0/);
 
 const privacy = readFileSync('PRIVACY.md', 'utf8');
 assert.match(privacy, /localhost-only/i);
@@ -68,7 +68,7 @@ assert.match(fairPlay, /server/i);
 const install = readFileSync('INSTALL_MOD.md', 'utf8');
 assert.match(install, /Minecraft Java Edition 1\.21\.11/);
 assert.match(install, /Fabric Loader/);
-assert.match(install, /blockcoach-client-0\.62\.0\+1\.21\.11\.jar/);
+assert.match(install, /blockcoach-client-0\.63\.0\+1\.21\.11\.jar/);
 assert.match(install, /npm run bridge/);
 
 const modrinth = readFileSync('docs/modrinth.md', 'utf8');
@@ -86,13 +86,13 @@ assert.match(curseforge, /Fabric API/);
 assert.doesNotMatch(curseforge, /Win automatically|unfair PvP edge/i);
 
 const releaseChecklist = readFileSync('docs/github-release-checklist.md', 'utf8');
-assert.match(releaseChecklist, /v0\.62\.0-alpha/);
+assert.match(releaseChecklist, /v0\.63\.0-alpha/);
 assert.match(releaseChecklist, /BlockCoach Alpha Release/);
 assert.match(releaseChecklist, /PRIVACY\.md/);
 assert.match(releaseChecklist, /FAIR_PLAY\.md/);
 
 const readme = readFileSync('README.md', 'utf8');
-assert.match(readme, /Version 0.62/);
+assert.match(readme, /Version 0.63/);
 assert.match(readme, /Release Automation/);
 assert.match(readme, /docs\/mod-release-metadata\.json/);
 assert.match(readme, /test:release-prep/);

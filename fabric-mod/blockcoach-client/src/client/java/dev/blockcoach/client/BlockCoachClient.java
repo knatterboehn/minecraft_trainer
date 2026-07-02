@@ -3,6 +3,7 @@ package dev.blockcoach.client;
 import java.lang.reflect.Method;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
@@ -11,13 +12,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 public final class BlockCoachClient implements ClientModInitializer {
-    private static final String MINECRAFT_VERSION = "1.21.11";
-    private static final String BRIDGE_ENDPOINT = System.getProperty(
-            "blockcoach.bridge",
-            "http://127.0.0.1:4317/events"
-    );
-
-    private final BlockCoachBridgeClient bridge = new BlockCoachBridgeClient(BRIDGE_ENDPOINT);
+    private final BlockCoachBridgeClient bridge = new BlockCoachBridgeClient(BlockCoachConstants.BRIDGE_ENDPOINT);
     private boolean connectedSent = false;
     private float lastHealth = -1.0F;
     private int lastHotbarSlot = -2;
@@ -28,6 +23,7 @@ public final class BlockCoachClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        ClientLifecycleEvents.CLIENT_STARTED.register(this::sendMinecraftConnected);
         ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> sendServerJoined(client));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
@@ -48,7 +44,7 @@ public final class BlockCoachClient implements ClientModInitializer {
         connectedSent = true;
         bridge.send("minecraft_connected", BlockCoachBridgeClient.map(
                 "playerName", client.getSession().getUsername(),
-                "minecraftVersion", MINECRAFT_VERSION
+                "minecraftVersion", BlockCoachConstants.MINECRAFT_VERSION
         ));
     }
 
@@ -57,7 +53,7 @@ public final class BlockCoachClient implements ClientModInitializer {
         String address = server != null ? server.address : "singleplayer";
         bridge.send("server_joined", BlockCoachBridgeClient.map(
                 "server", address,
-                "minecraftVersion", MINECRAFT_VERSION,
+                "minecraftVersion", BlockCoachConstants.MINECRAFT_VERSION,
                 "playerName", client.getSession().getUsername()
         ));
     }

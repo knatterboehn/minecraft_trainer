@@ -5,18 +5,18 @@ GitHub Releases are the first alpha distribution step before Modrinth and CurseF
 ## Target release
 
 ```text
-Tag: v0.62.0-alpha
-Title: BlockCoach Client v0.62.0-alpha
+Tag: v0.63.0-alpha
+Title: BlockCoach Client v0.63.0-alpha
 Minecraft: Java Edition 1.21.11
 Loader: Fabric
-Artifact: blockcoach-client-0.62.0+1.21.11.jar
+Artifact: blockcoach-client-0.63.0+1.21.11.jar
 ```
 
 ## Automatic release path
 
 ```zsh
-git tag v0.62.0-alpha
-git push origin v0.62.0-alpha
+git tag v0.63.0-alpha
+git push origin v0.63.0-alpha
 ```
 
 Then wait for:
@@ -55,7 +55,7 @@ docs/release-notes-alpha-template.md
 ## Release notes draft
 
 ```markdown
-# BlockCoach Client 0.62.0 Alpha
+# BlockCoach Client 0.63.0 Alpha
 
 **Level up your fights.**
 

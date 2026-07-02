@@ -5,7 +5,9 @@ import { art } from '../assets.js';
 import { BRAND_DISCLAIMER } from '../../brand.js';
 
 function options(items, selected) {
-  return items.map((item) => `<option value="${escapeHtml(item)}" ${item === selected ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
+  const normalized = String(selected || '');
+  const optionItems = normalized && !items.includes(normalized) ? [normalized, ...items] : items;
+  return optionItems.map((item) => `<option value="${escapeHtml(item)}" ${item === normalized ? 'selected' : ''}>${escapeHtml(item)}</option>`).join('');
 }
 
 function formatTime(value) {

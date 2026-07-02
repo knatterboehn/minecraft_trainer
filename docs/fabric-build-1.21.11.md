@@ -1,4 +1,4 @@
-# v0.62 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.63 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 
@@ -172,7 +172,7 @@ inventory.selectedSlot -> sicherer Hotbar-Slot-Resolver ohne direkten Privatfeld
 
 ## Nächster Schritt nach erfolgreichem Build
 
-v0.62 kann serverabhaengige Erkennung ergaenzen:
+v0.63 kann serverabhaengige Erkennung ergaenzen:
 
 ```text
 chat_message + scoreboard_update

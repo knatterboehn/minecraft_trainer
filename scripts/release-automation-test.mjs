@@ -20,12 +20,12 @@ const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 const metadata = JSON.parse(readFileSync('docs/mod-release-metadata.json', 'utf8'));
 const buildGradle = readFileSync('fabric-mod/blockcoach-client/build.gradle', 'utf8');
 
-assert.equal(pkg.version, '0.62.0');
-assert.equal(metadata.version, '0.62.0');
-assert.equal(metadata.artifactName, 'blockcoach-client-0.62.0+1.21.11.jar');
+assert.equal(pkg.version, '0.63.0');
+assert.equal(metadata.version, '0.63.0');
+assert.equal(metadata.artifactName, 'blockcoach-client-0.63.0+1.21.11.jar');
 assert.equal(metadata.platforms.githubReleases.status, 'automated-alpha-ready');
-assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0\.62'/);
-assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.62\.0/);
+assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0\.63'/);
+assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.63\.0/);
 assert.match(buildGradle, /version = "\$\{project\.mod_version\}\+\$\{project\.minecraft_version\}"/);
 
 assert.match(releaseWorkflow, /name:\s*BlockCoach Alpha Release/);
@@ -49,7 +49,7 @@ assert.match(releaseWorkflow, /npm run fabric:build/);
 assert.match(releaseWorkflow, /Locate release JAR/);
 assert.match(releaseWorkflow, /! -name '\*-sources\.jar'/);
 assert.match(releaseWorkflow, /actions\/upload-artifact@v4/);
-assert.match(releaseWorkflow, /blockcoach-client-0\.62\.0-minecraft-1\.21\.11/);
+assert.match(releaseWorkflow, /blockcoach-client-0\.63\.0-minecraft-1\.21\.11/);
 assert.match(releaseWorkflow, /gh release create/);
 assert.match(releaseWorkflow, /--notes-file docs\/release-notes-alpha-template\.md/);
 assert.match(releaseWorkflow, /--prerelease/);
@@ -59,9 +59,9 @@ assert.doesNotMatch(releaseWorkflow, /MODRINTH_TOKEN|CURSEFORGE_TOKEN|secrets\./
 
 assert.match(buildWorkflow, /permissions:\s*\n\s*contents:\s*read/);
 assert.doesNotMatch(buildWorkflow, /contents:\s*write/);
-assert.match(buildWorkflow, /blockcoach-client-0\.62\.0-minecraft-1\.21\.11/);
+assert.match(buildWorkflow, /blockcoach-client-0\.63\.0-minecraft-1\.21\.11/);
 
-assert.match(notes, /BlockCoach Client 0\.62\.0 Alpha/);
+assert.match(notes, /BlockCoach Client 0\.63\.0 Alpha/);
 assert.match(notes, /Minecraft Java `1\.21\.11`/);
 assert.match(notes, /No auto-aim/i);
 assert.match(notes, /No cloud sync/i);
@@ -77,7 +77,7 @@ assert.match(checklist, /mod sends data to anything other than localhost or `127
 assert.match(checklist, /does not aim, click, move, mark enemies, or automate gameplay/);
 
 assert.match(actionsGuide, /Alpha Release Workflow/);
-assert.match(actionsGuide, /git tag v0\.62\.0-alpha/);
+assert.match(actionsGuide, /git tag v0\.63\.0-alpha/);
 assert.match(actionsGuide, /GitHub Prerelease/);
 assert.match(actionsGuide, /docs\/alpha-test-checklist\.md/);
 

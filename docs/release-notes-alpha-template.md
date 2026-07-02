@@ -1,4 +1,4 @@
-# BlockCoach Client 0.62.0 Alpha
+# BlockCoach Client 0.63.0 Alpha
 
 **Level up your fights.**
 
@@ -7,6 +7,10 @@ This is an alpha release of the BlockCoach Fabric client for Minecraft Java `1.2
 ## What works
 
 - Fabric client `.jar` is built by GitHub Actions.
+- Minecraft start menu shows a `BlockCoach` entry when the mod is installed.
+- The `BlockCoach` menu entry opens a lightweight in-game status screen.
+- Minecraft account name is sent via `minecraft_connected`.
+- Joined server is sent via `server_joined` and can prefill the web profile.
 - Client-side events are sent only to the local BlockCoach bridge.
 - Supported prototype events:
   - `minecraft_connected`

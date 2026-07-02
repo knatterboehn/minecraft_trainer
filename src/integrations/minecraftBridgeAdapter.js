@@ -208,7 +208,37 @@ function summarizeBridgeEvent(event, bridge, app) {
   };
 }
 
-function updateBridgeStatus(bridge, event) {
+function isDefaultServer(value) {
+  const text = safeString(value, '');
+  return !text || text === 'PvPClub' || text === 'Anderer Server';
+}
+
+function applyLiveProfile(app, event, bridge) {
+  if (!app.user || typeof app.user !== 'object') return;
+  const payload = event.payload || {};
+
+  if (event.type === BRIDGE_EVENT_TYPES.MINECRAFT_CONNECTED) {
+    const playerName = safeString(payload.playerName || payload.name, '');
+    if (playerName && !safeString(app.user.name, '')) {
+      app.user.name = playerName.slice(0, 24);
+    }
+  }
+
+  if (event.type === BRIDGE_EVENT_TYPES.SERVER_JOINED) {
+    const server = safeString(payload.server || payload.serverName || payload.address, '');
+    if (server && isDefaultServer(app.user.server)) {
+      app.user.server = server.slice(0, 80);
+    }
+  }
+
+  bridge.appliedProfile = {
+    playerName: bridge.playerName || null,
+    server: bridge.server || null,
+    updatedAt: event.createdAt
+  };
+}
+
+function updateBridgeStatus(app, bridge, event) {
   const payload = event.payload || {};
   bridge.lastSeenAt = event.createdAt;
   bridge.lastError = null;
@@ -228,6 +258,8 @@ function updateBridgeStatus(bridge, event) {
     bridge.status = BRIDGE_STATUS.SERVER_DETECTED;
     bridge.server = safeString(payload.server || payload.serverName || payload.address, '') || bridge.server;
   }
+
+  applyLiveProfile(app, event, bridge);
 }
 
 function mapBridgeEventToGameEvents(app, event) {
@@ -263,7 +295,7 @@ function mapBridgeEventToGameEvents(app, event) {
 export function ingestBridgeEvent(app, rawEvent) {
   const bridge = ensureBridgeState(app);
   const event = normalizeRawBridgeEvent(rawEvent);
-  updateBridgeStatus(bridge, event);
+  updateBridgeStatus(app, bridge, event);
   bridge.counters.received += 1;
 
   const mappedEvents = mapBridgeEventToGameEvents(app, event);

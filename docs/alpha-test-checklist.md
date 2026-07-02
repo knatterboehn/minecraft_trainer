@@ -21,9 +21,13 @@ npm run bridge
 ## In Minecraft
 
 - [ ] Start Minecraft with the Fabric profile.
+- [ ] Confirm the Minecraft start menu shows a `BlockCoach` entry.
+- [ ] Open the `BlockCoach` entry and use `Bridge testen`.
+- [ ] Confirm the bridge receives `minecraft_connected` and includes the Minecraft name.
 - [ ] Join a singleplayer world or multiplayer server.
 - [ ] Confirm the bridge receives `minecraft_connected`.
 - [ ] Confirm the bridge receives `server_joined` after joining a server.
+- [ ] Confirm the BlockCoach web app shows the detected Minecraft name and server in the profile/onboarding flow.
 - [ ] Switch hotbar slots and confirm a `hotbar_changed` event appears.
 - [ ] Use an item and confirm an `item_used` event appears.
 - [ ] Take damage and confirm a `health_changed` event appears.

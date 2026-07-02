@@ -85,18 +85,18 @@ BlockCoach is not officially affiliated with Minecraft, Mojang, or Microsoft.
 ## Version upload draft
 
 ```text
-Version name: BlockCoach Client 0.62.0 Alpha
-Version number: 0.62.0+1.21.11
+Version name: BlockCoach Client 0.63.0 Alpha
+Version number: 0.63.0+1.21.11
 Version type: Alpha
 Game versions: 1.21.11
 Loaders: Fabric
-Primary file: blockcoach-client-0.62.0+1.21.11.jar
+Primary file: blockcoach-client-0.63.0+1.21.11.jar
 ```
 
 ## Changelog draft
 
 ```markdown
-## 0.62.0 Alpha
+## 0.63.0 Alpha
 
 Alpha release preparation for BlockCoach Client with automated GitHub Actions build support.
 

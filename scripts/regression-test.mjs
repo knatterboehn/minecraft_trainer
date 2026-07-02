@@ -70,7 +70,8 @@ const normalized = normalizeApp({
 });
 assert.equal(normalized.user.name, 'Vince');
 assert.equal(normalized.user.mainSkill, 'Sword PvP');
-assert.equal(normalized.user.server, 'PvPClub');
+assert.equal(normalized.user.server, 'Bad');
+assert.equal(normalizeApp({ user: { name: 'Vince', server: 'play.example.net' } }).user.server, 'play.example.net');
 assert.equal(normalized.user.difficulty, 'Normal');
 assert.equal(normalized.user.targetFights, 20);
 assert.equal(normalized.settings.theme, 'emerald');

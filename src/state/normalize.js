@@ -13,6 +13,12 @@ function safeChoice(value, list, fallback) {
   return list.includes(value) ? value : fallback;
 }
 
+function safeServer(value, fallback = 'PvPClub') {
+  const text = safeString(value, '');
+  if (!text) return fallback;
+  return text.slice(0, 80);
+}
+
 function validDate(value) {
   if (typeof value !== 'string') return false;
   const date = new Date(`${value}T00:00:00`);
@@ -35,7 +41,7 @@ function normalizeSession(entry) {
     date,
     questId: safeString(entry.questId, ''),
     skill: safeString(entry.skill, 'Allround'),
-    server: safeString(entry.server, 'PvPClub'),
+    server: safeServer(entry.server, 'PvPClub'),
     focus: safeString(entry.focus, ''),
     targetFights: Math.max(1, Math.min(20, Number(entry.targetFights || fights || 5))),
     challengeLabel: safeString(entry.challengeLabel, 'Bonus Challenge'),
@@ -86,7 +92,7 @@ function normalizeActiveSession(entry, quest, today) {
     date,
     questId: safeString(entry.questId, quest.id),
     skill: safeString(entry.skill, quest.skill),
-    server: safeString(entry.server, quest.server),
+    server: safeServer(entry.server, quest.server),
     focus: safeString(entry.focus, quest.focus),
     targetFights: Math.max(1, Math.min(20, Number(entry.targetFights || quest.targetFights || 5))),
     challengeLabel: safeString(entry.challengeLabel, quest.challenge.label),
@@ -123,7 +129,7 @@ export function normalizeApp(raw) {
   base.user = {
     name: safeString(source.user?.name, ''),
     mainSkill: safeChoice(source.user?.mainSkill, SKILLS, 'Sword PvP'),
-    server: safeChoice(source.user?.server, SERVERS, 'PvPClub'),
+    server: safeServer(source.user?.server, 'PvPClub'),
     difficulty: safeChoice(source.user?.difficulty, DIFFICULTIES, 'Normal'),
     targetFights: Math.max(1, Math.min(20, Number(source.user?.targetFights || 5)))
   };

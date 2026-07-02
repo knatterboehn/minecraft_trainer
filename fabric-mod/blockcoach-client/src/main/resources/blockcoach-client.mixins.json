@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "dev.blockcoach.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "BlockCoachTitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

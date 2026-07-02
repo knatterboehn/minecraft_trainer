@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Existing alpha tag to release, for example v0.62.0-alpha'
+        description: 'Existing alpha tag to release, for example v0.63.0-alpha'
         required: true
         type: string
 
@@ -97,7 +97,7 @@ jobs:
       - name: Upload Fabric JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: blockcoach-client-0.62.0-minecraft-1.21.11
+          name: blockcoach-client-0.63.0-minecraft-1.21.11
           path: ${{ steps.jar.outputs.path }}
           if-no-files-found: error
 
@@ -113,7 +113,7 @@ jobs:
           fi
           case "${TAG_NAME}" in
             v*.*.*-alpha) ;;
-            *) echo "Release tag must look like v0.62.0-alpha. Got: ${TAG_NAME}" >&2; exit 1 ;;
+            *) echo "Release tag must look like v0.63.0-alpha. Got: ${TAG_NAME}" >&2; exit 1 ;;
           esac
           echo "tag=${TAG_NAME}" >> "$GITHUB_OUTPUT"
 

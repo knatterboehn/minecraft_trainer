@@ -1,4 +1,4 @@
-# v0.62 Fabric Mod Prototype
+# v0.63 Fabric Mod Prototype
 
 ## Ziel
 
@@ -16,6 +16,27 @@ Minecraft Java Edition 1.21.11
 ```text
 fabric-mod/blockcoach-client/
 ```
+
+## Minecraft Startmenue
+
+Wenn die Mod installiert ist, fuegt sie dem Minecraft-Startmenue einen sichtbaren Eintrag hinzu:
+
+```text
+BlockCoach
+```
+
+Der Eintrag oeffnet einen kleinen Status-Screen im Spiel. Dort sieht Vince:
+
+- Spielername
+- Bridge-Endpunkt
+- Hinweis, dass der Server beim Join automatisch erkannt wird
+- Button `Bridge testen`
+
+Der Menueintrag sendet nur einen sicheren Handshake an `localhost`. Er automatisiert kein Gameplay.
+
+## Automatisch uebernommene Profildaten
+
+Die Mod sendet den Minecraft-Accountnamen ueber `minecraft_connected` und den Server ueber `server_joined`. Die Web-App uebernimmt diese Daten automatisch, wenn im Profil noch kein eigener Name oder nur ein Default-Server gesetzt ist.
 
 ## Was er sendet
 
