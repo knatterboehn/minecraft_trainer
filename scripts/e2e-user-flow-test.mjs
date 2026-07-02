@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
+import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 
 const PROJECT_ROOT = resolve(new URL('..', import.meta.url).pathname);
@@ -45,9 +46,51 @@ function findExecutable() {
   throw new Error('Kein Chrome/Chromium gefunden. Setze E2E_CHROME_PATH auf den Browser-Pfad.');
 }
 
-async function fetchJsonWithRetry(url, label, retries = 80) {
+function tailText(chunks, maxLength = 4000) {
+  const text = chunks.join('');
+  return text.length <= maxLength ? text : text.slice(text.length - maxLength);
+}
+
+function chromeDiagnostic(label, context = {}) {
+  const lines = [label];
+  if (context.chrome) lines.push(`Chrome: ${context.chrome}`);
+  if (context.debugPort) lines.push(`Debug port: ${context.debugPort}`);
+  if (context.exitCode !== undefined || context.exitSignal !== undefined) {
+    lines.push(`Chrome exit: code=${context.exitCode ?? 'running'} signal=${context.exitSignal ?? 'none'}`);
+  }
+  if (context.stdout?.length) lines.push(`Chrome stdout:\n${tailText(context.stdout)}`);
+  if (context.stderr?.length) lines.push(`Chrome stderr:\n${tailText(context.stderr)}`);
+  if (context.lastError) lines.push(`Last fetch error: ${context.lastError.message || String(context.lastError)}`);
+  return lines.join('\n');
+}
+
+async function findFreePort() {
+  return new Promise((resolvePromise, reject) => {
+    const server = createServer();
+    server.unref();
+    server.on('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : 0;
+      server.close(() => resolvePromise(port));
+    });
+  });
+}
+
+async function fetchJsonWithRetry(url, label, options = {}) {
+  const retries = options.retries ?? 300;
+  const delayMs = options.delayMs ?? 100;
   let lastError;
   for (let i = 0; i < retries; i += 1) {
+    if (options.chromeState?.exited) {
+      throw new Error(chromeDiagnostic(`${label}: Chrome wurde beendet, bevor der Debugger erreichbar war.`, {
+        ...options,
+        exitCode: options.chromeState.exitCode,
+        exitSignal: options.chromeState.exitSignal,
+        lastError
+      }));
+    }
+
     try {
       const response = await fetch(url);
       if (response.ok) return response.json();
@@ -55,9 +98,12 @@ async function fetchJsonWithRetry(url, label, retries = 80) {
     } catch (error) {
       lastError = error;
     }
-    await sleep(100);
+    await sleep(delayMs);
   }
-  throw lastError || new Error(`${label}: keine Antwort`);
+  throw new Error(chromeDiagnostic(`${label}: keine Antwort nach ${Math.round((retries * delayMs) / 1000)} Sekunden.`, {
+    ...options,
+    lastError
+  }));
 }
 
 class CDPClient {
@@ -117,8 +163,8 @@ class CDPClient {
   }
 }
 
-async function connectToPage(debugPort) {
-  const targets = await fetchJsonWithRetry(`http://127.0.0.1:${debugPort}/json/list`, 'CDP targets');
+async function connectToPage(debugPort, diagnostics = {}) {
+  const targets = await fetchJsonWithRetry(`http://127.0.0.1:${debugPort}/json/list`, 'CDP targets', diagnostics);
   const target = targets.find((item) => item.type === 'page' && item.webSocketDebuggerUrl) || targets[0];
   if (!target?.webSocketDebuggerUrl) throw new Error('Keine Chrome-Page für CDP gefunden.');
 
@@ -345,7 +391,7 @@ async function loadAppInBlankPage(client) {
 }
 
 async function run() {
-  const debugPort = 43000 + Math.floor(Math.random() * 1000);
+  const debugPort = await findFreePort();
   const userDataDir = mkdtempSync(join(tmpdir(), 'blockcoach-e2e-'));
   const chrome = findExecutable();
 
@@ -353,18 +399,34 @@ async function run() {
     '--headless=new',
     '--disable-gpu',
     '--disable-dev-shm-usage',
+    '--disable-extensions',
+    '--disable-background-networking',
+    '--disable-features=Translate,BackForwardCache,AcceptCHFrame,MediaRouter',
     '--no-sandbox',
     '--no-first-run',
     '--no-default-browser-check',
+    '--remote-debugging-address=127.0.0.1',
     `--remote-debugging-port=${debugPort}`,
     `--user-data-dir=${userDataDir}`,
     'about:blank'
   ], { stdio: ['ignore', 'pipe', 'pipe'] });
 
+  const chromeStdout = [];
+  const chromeStderr = [];
+  const chromeState = { exited: false, exitCode: undefined, exitSignal: undefined };
+  chromeProcess.stdout?.on('data', (chunk) => chromeStdout.push(String(chunk)));
+  chromeProcess.stderr?.on('data', (chunk) => chromeStderr.push(String(chunk)));
+  chromeProcess.once('exit', (code, signal) => {
+    chromeState.exited = true;
+    chromeState.exitCode = code;
+    chromeState.exitSignal = signal;
+  });
+  const diagnostics = { chrome, debugPort, stdout: chromeStdout, stderr: chromeStderr, chromeState };
+
   let client;
   try {
-    await fetchJsonWithRetry(`http://127.0.0.1:${debugPort}/json/version`, 'Chrome Debugger');
-    client = await connectToPage(debugPort);
+    await fetchJsonWithRetry(`http://127.0.0.1:${debugPort}/json/version`, 'Chrome Debugger', diagnostics);
+    client = await connectToPage(debugPort, diagnostics);
     await client.send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
     await loadAppInBlankPage(client);
 

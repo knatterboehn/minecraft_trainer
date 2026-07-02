@@ -1,8 +1,8 @@
-# Test Report v0.61 - Alpha Release Automation
+# Test Report v0.62 - Alpha Release Automation
 
 ## Scope
 
-v0.61 prepares automated GitHub alpha releases for the BlockCoach Fabric client.
+v0.62 prepares automated GitHub alpha releases for the BlockCoach Fabric client.
 
 ## Added
 
@@ -17,7 +17,7 @@ v0.61 prepares automated GitHub alpha releases for the BlockCoach Fabric client.
 The new workflow runs on tags like:
 
 ```text
-v0.61.0-alpha
+v0.62.0-alpha
 ```
 
 It performs:
@@ -43,12 +43,12 @@ Web app checks
 
 ## Version metadata
 
-- App version: `0.61`
-- Package version: `0.61.0`
-- Mod version: `0.61.0`
-- Release artifact target: `blockcoach-client-0.61.0+1.21.11.jar`
-- GitHub Actions artifact name: `blockcoach-client-0.61.0-minecraft-1.21.11`
-- Alpha tag target: `v0.61.0-alpha`
+- App version: `0.62`
+- Package version: `0.62.0`
+- Mod version: `0.62.0`
+- Release artifact target: `blockcoach-client-0.62.0+1.21.11.jar`
+- GitHub Actions artifact name: `blockcoach-client-0.62.0-minecraft-1.21.11`
+- Alpha tag target: `v0.62.0-alpha`
 
 ## Commands run
 
@@ -80,16 +80,16 @@ The real Fabric Gradle build was not executed in this chat environment because e
 
 ## Next external check
 
-Push v0.61, then create and push the alpha tag:
+Push v0.62, then create and push the alpha tag:
 
 ```zsh
-git tag v0.61.0-alpha
-git push origin v0.61.0-alpha
+git tag v0.62.0-alpha
+git push origin v0.62.0-alpha
 ```
 
 Expected GitHub result:
 
 ```text
 Actions → BlockCoach Alpha Release → green
-GitHub Releases → BlockCoach Client v0.61.0-alpha prerelease with .jar attached
+GitHub Releases → BlockCoach Client v0.62.0-alpha prerelease with .jar attached
 ```

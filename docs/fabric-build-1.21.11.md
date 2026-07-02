@@ -1,4 +1,4 @@
-# v0.61 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.62 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 

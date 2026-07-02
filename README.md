@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.61** ergänzt die Alpha-Release-Automation: Ein Tag wie `v0.61.0-alpha` kann automatisch Web-Tests, Browser-E2E, Fabric-Build und einen GitHub-Prerelease mit `.jar`-Asset auslösen.
+**Version 0.62** ergänzt die Alpha-Release-Automation: Ein Tag wie `v0.62.0-alpha` kann automatisch Web-Tests, Browser-E2E, Fabric-Build und einen GitHub-Prerelease mit `.jar`-Asset auslösen.
 
 ## Produktprinzip
 
@@ -129,7 +129,7 @@ npm run ci:fabric   # Fabric Resolver + Preflight + Gradle Build
 Nach erfolgreichem Fabric-Build heißt das Workflow-Artefakt:
 
 ```text
-blockcoach-client-0.61.0-minecraft-1.21.11
+blockcoach-client-0.62.0-minecraft-1.21.11
 ```
 
 ### Alpha Release Workflow
@@ -141,7 +141,7 @@ blockcoach-client-0.61.0-minecraft-1.21.11
 Der Release-Workflow läuft bei Tags wie:
 
 ```text
-v0.61.0-alpha
+v0.62.0-alpha
 ```
 
 Er baut die Web-App-Checks, den Browser-E2E-Test und die Fabric-JAR erneut. Danach erstellt er einen GitHub-Prerelease und hängt die `.jar` an.
@@ -200,7 +200,7 @@ Für Alpha-Tester nach einem erfolgreichen Release:
 1. Minecraft Java 1.21.11 installieren
 2. Fabric Loader installieren
 3. Fabric API installieren, falls benötigt
-4. blockcoach-client-0.61.0+1.21.11.jar in den mods-Ordner legen
+4. blockcoach-client-0.62.0+1.21.11.jar in den mods-Ordner legen
 5. npm run bridge starten
 6. BlockCoach Web-App öffnen
 7. Minecraft mit Fabric starten

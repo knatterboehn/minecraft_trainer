@@ -5,17 +5,17 @@ Target version:
 ```text
 Minecraft Java Edition 1.21.11
 Fabric Loader
-BlockCoach Client 0.61.0 alpha
+BlockCoach Client 0.62.0 alpha
 ```
 
 ## Current status
 
-The Fabric client now builds successfully in GitHub Actions, and v0.61 adds automated GitHub alpha release creation.
+The Fabric client now builds successfully in GitHub Actions, and v0.62 adds automated GitHub alpha release creation.
 
 Expected release artifact:
 
 ```text
-blockcoach-client-0.61.0+1.21.11.jar
+blockcoach-client-0.62.0+1.21.11.jar
 ```
 
 ## Install for alpha testers

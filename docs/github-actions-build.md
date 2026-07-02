@@ -1,4 +1,4 @@
-# v0.61 GitHub Actions Build and Alpha Release
+# v0.62 GitHub Actions Build and Alpha Release
 
 ## Ziel
 
@@ -13,7 +13,7 @@ Push nach main
 ```
 
 ```text
-Tag v0.61.0-alpha
+Tag v0.62.0-alpha
 → Web app checks
 → Browser E2E checks
 → Fabric client JAR
@@ -112,7 +112,7 @@ Der Fabric-Build startet erst, wenn Web-App-Checks und Browser-E2E grün sind.
 Nach erfolgreichem Build wird hochgeladen:
 
 ```text
-blockcoach-client-0.61.0-minecraft-1.21.11
+blockcoach-client-0.62.0-minecraft-1.21.11
 ```
 
 Der eigentliche `.jar` liegt im Artifact aus:
@@ -124,7 +124,7 @@ fabric-mod/blockcoach-client/build/libs/*.jar
 Der erwartete Release-Dateiname ist:
 
 ```text
-blockcoach-client-0.61.0+1.21.11.jar
+blockcoach-client-0.62.0+1.21.11.jar
 ```
 
 ## Alpha Release Workflow
@@ -132,13 +132,13 @@ blockcoach-client-0.61.0+1.21.11.jar
 Der Release-Workflow läuft bei Tags wie:
 
 ```text
-v0.61.0-alpha
+v0.62.0-alpha
 ```
 
 Er kann auch manuell gestartet werden:
 
 ```text
-Actions → BlockCoach Alpha Release → Run workflow → tag_name: v0.61.0-alpha
+Actions → BlockCoach Alpha Release → Run workflow → tag_name: v0.62.0-alpha
 ```
 
 ### Was der Release Workflow macht
@@ -203,8 +203,8 @@ docs/alpha-test-checklist.md
 ### Alpha Release erzeugen
 
 ```zsh
-git tag v0.61.0-alpha
-git push origin v0.61.0-alpha
+git tag v0.62.0-alpha
+git push origin v0.62.0-alpha
 ```
 
 Danach:
@@ -250,5 +250,5 @@ Der Workflow lädt das neue `.jar` mit `--clobber` erneut hoch. Release Notes we
 Der Release-Workflow akzeptiert nur Alpha-Tags wie:
 
 ```text
-v0.61.0-alpha
+v0.62.0-alpha
 ```
