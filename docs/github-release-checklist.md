@@ -5,11 +5,11 @@ GitHub Releases should be the first alpha distribution step before Modrinth and 
 ## Target release
 
 ```text
-Tag: blockcoach-client-v0.59.0
-Title: BlockCoach Client 0.59.0 Alpha
+Tag: blockcoach-client-v0.60.0
+Title: BlockCoach Client 0.60.0 Alpha
 Minecraft: Java Edition 1.21.11
 Loader: Fabric
-Artifact: blockcoach-client-0.59.0+1.21.11.jar
+Artifact: blockcoach-client-0.60.0+1.21.11.jar
 ```
 
 ## Before creating the release
@@ -34,7 +34,7 @@ Artifact: blockcoach-client-0.59.0+1.21.11.jar
 ## Release notes draft
 
 ```markdown
-# BlockCoach Client 0.59.0 Alpha
+# BlockCoach Client 0.60.0 Alpha
 
 **Level up your fights.**
 

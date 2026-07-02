@@ -5,7 +5,7 @@ Target version:
 ```text
 Minecraft Java Edition 1.21.11
 Fabric Loader
-BlockCoach Client 0.59.0 alpha
+BlockCoach Client 0.60.0 alpha
 ```
 
 ## Current status
@@ -15,7 +15,7 @@ The release package is prepared, but the first public `.jar` should only be publ
 Expected future artifact:
 
 ```text
-blockcoach-client-0.59.0+1.21.11.jar
+blockcoach-client-0.60.0+1.21.11.jar
 ```
 
 ## Install for alpha testers

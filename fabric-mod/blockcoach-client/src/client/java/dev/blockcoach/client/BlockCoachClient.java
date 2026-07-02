@@ -1,15 +1,17 @@
 package dev.blockcoach.client;
 
+import java.lang.reflect.Method;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 
 public final class BlockCoachClient implements ClientModInitializer {
+    private static final String MINECRAFT_VERSION = "1.21.11";
     private static final String BRIDGE_ENDPOINT = System.getProperty(
             "blockcoach.bridge",
             "http://127.0.0.1:4317/events"
@@ -18,7 +20,7 @@ public final class BlockCoachClient implements ClientModInitializer {
     private final BlockCoachBridgeClient bridge = new BlockCoachBridgeClient(BRIDGE_ENDPOINT);
     private boolean connectedSent = false;
     private float lastHealth = -1.0F;
-    private int lastHotbarSlot = -1;
+    private int lastHotbarSlot = -2;
     private String lastMainHandItem = "";
     private boolean deathSent = false;
     private long lastSessionTickAt = 0L;
@@ -46,7 +48,7 @@ public final class BlockCoachClient implements ClientModInitializer {
         connectedSent = true;
         bridge.send("minecraft_connected", BlockCoachBridgeClient.map(
                 "playerName", client.getSession().getUsername(),
-                "minecraftVersion", SharedConstants.getGameVersion().getName()
+                "minecraftVersion", MINECRAFT_VERSION
         ));
     }
 
@@ -55,7 +57,7 @@ public final class BlockCoachClient implements ClientModInitializer {
         String address = server != null ? server.address : "singleplayer";
         bridge.send("server_joined", BlockCoachBridgeClient.map(
                 "server", address,
-                "minecraftVersion", SharedConstants.getGameVersion().getName(),
+                "minecraftVersion", MINECRAFT_VERSION,
                 "playerName", client.getSession().getUsername()
         ));
     }
@@ -83,7 +85,7 @@ public final class BlockCoachClient implements ClientModInitializer {
 
     private void sendHotbarChanged(MinecraftClient client) {
         PlayerInventory inventory = client.player.getInventory();
-        int slot = inventory.selectedSlot;
+        int slot = resolveSelectedHotbarSlot(inventory);
         ItemStack stack = client.player.getMainHandStack();
         String item = stack.isEmpty() ? "empty" : stack.getItem().toString();
         if (slot != lastHotbarSlot || !item.equals(lastMainHandItem)) {
@@ -103,6 +105,20 @@ public final class BlockCoachClient implements ClientModInitializer {
             ));
         }
         lastUsePressed = usePressed;
+    }
+
+    private int resolveSelectedHotbarSlot(PlayerInventory inventory) {
+        try {
+            Method getter = inventory.getClass().getMethod("getSelectedSlot");
+            Object value = getter.invoke(inventory);
+            if (value instanceof Number number) {
+                return number.intValue();
+            }
+        } catch (ReflectiveOperationException | SecurityException ignored) {
+            // Minecraft 1.21.11 made the selectedSlot field private. If Yarn exposes a
+            // getter at runtime, use it; otherwise keep the bridge event safe with -1.
+        }
+        return -1;
     }
 
     private void sendSessionTick(MinecraftClient client) {

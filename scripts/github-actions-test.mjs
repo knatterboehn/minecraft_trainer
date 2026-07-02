@@ -12,11 +12,11 @@ const docs = readFileSync(docsPath, 'utf8');
 const pkg = JSON.parse(readFileSync('package.json', 'utf8'));
 const metadata = JSON.parse(readFileSync('docs/mod-release-metadata.json', 'utf8'));
 
-assert.equal(pkg.version, '0.59.0');
-assert.equal(metadata.version, '0.59.0');
-assert.equal(metadata.artifactName, 'blockcoach-client-0.59.0+1.21.11.jar');
-assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0\.59'/);
-assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.59\.0/);
+assert.equal(pkg.version, '0.60.0');
+assert.equal(metadata.version, '0.60.0');
+assert.equal(metadata.artifactName, 'blockcoach-client-0.60.0+1.21.11.jar');
+assert.match(readFileSync('src/state/defaults.js', 'utf8'), /APP_VERSION = '0\.60'/);
+assert.match(readFileSync('fabric-mod/blockcoach-client/gradle.properties', 'utf8'), /mod_version=0\.60\.0/);
 
 assert.match(workflow, /name:\s*BlockCoach Fabric Build/);
 assert.match(workflow, /push:/);
@@ -46,7 +46,7 @@ assert.match(workflow, /npm run fabric:preflight/);
 assert.match(workflow, /npm run fabric:build/);
 assert.match(workflow, /actions\/upload-artifact@v4/);
 assert.match(workflow, /fabric-mod\/blockcoach-client\/build\/libs\/\*\.jar/);
-assert.match(workflow, /blockcoach-client-0\.59\.0-minecraft-1\.21\.11/);
+assert.match(workflow, /blockcoach-client-0\.60\.0-minecraft-1\.21\.11/);
 assert.match(workflow, /if-no-files-found:\s*error/);
 assert.doesNotMatch(workflow, /GITHUB_TOKEN.*write|contents:\s*write|modrinth token|curseforge token/i);
 
@@ -59,11 +59,11 @@ assert.match(pkg.scripts.test, /test:e2e/);
 assert.match(pkg.scripts['test:core'], /github-actions-test\.mjs/);
 assert.doesNotMatch(pkg.scripts['ci:web'], /test:e2e/);
 
-assert.match(docs, /v0\.59 GitHub Actions Build/);
+assert.match(docs, /v0\.60 GitHub Actions Build/);
 assert.match(docs, /Browser E2E checks/);
 assert.match(docs, /\.github\/workflows\/fabric-build\.yml/);
-assert.match(docs, /blockcoach-client-0\.59\.0-minecraft-1\.21\.11/);
-assert.match(docs, /blockcoach-client-0\.59\.0\+1\.21\.11\.jar/);
+assert.match(docs, /blockcoach-client-0\.60\.0-minecraft-1\.21\.11/);
+assert.match(docs, /blockcoach-client-0\.60\.0\+1\.21\.11\.jar/);
 assert.match(docs, /Gradle `9\.5\.0`/);
 assert.match(docs, /Fabric Loom 1\.17/i);
 assert.match(docs, /noch kein automatischer GitHub Release/i);

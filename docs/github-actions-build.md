@@ -1,8 +1,8 @@
-# v0.59 GitHub Actions Build
+# v0.60 GitHub Actions Build
 
 ## Ziel
 
-BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. v0.59 trennt die Pipeline bewusst in drei Jobs, damit Fehler im GitHub-UI nicht mehr als unklarer Sammelfehler erscheinen.
+BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. Die Pipeline bleibt in drei Jobs getrennt; v0.60 ergänzt zusätzlich den ersten Minecraft-1.21.11-Compile-Fix im Fabric-Client-Code.
 
 ```text
 Push nach main
@@ -100,7 +100,7 @@ Der Fabric-Build startet erst, wenn Web-App-Checks und Browser-E2E grün sind.
 Nach erfolgreichem Build wird hochgeladen:
 
 ```text
-blockcoach-client-0.59.0-minecraft-1.21.11
+blockcoach-client-0.60.0-minecraft-1.21.11
 ```
 
 Der eigentliche `.jar` liegt im Artifact aus:
@@ -112,12 +112,12 @@ fabric-mod/blockcoach-client/build/libs/*.jar
 Der erwartete spätere Dateiname ist:
 
 ```text
-blockcoach-client-0.59.0+1.21.11.jar
+blockcoach-client-0.60.0+1.21.11.jar
 ```
 
 ## Warum noch kein automatischer GitHub Release?
 
-v0.59 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
+v0.60 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
 
 1. der Workflow erfolgreich durchläuft,
 2. das `.jar` lokal in Minecraft 1.21.11 startet,
@@ -156,15 +156,19 @@ Der Preflight stoppt absichtlich, wenn Versionen unresolved sind, Java/Gradle fe
 
 ### Build schlägt mit `No matching variant of net.fabricmc:fabric-loom` fehl
 
-Dann passt die Gradle-Version nicht zur von Loom geforderten Gradle Plugin API. Der v0.58-Fehler kam genau daher: Fabric Loom 1.17 wurde geladen, der Runner nutzte aber noch Gradle 8.14.3. v0.59 setzt den Workflow deshalb auf Gradle `9.5.0`.
+Dann passt die Gradle-Version nicht zur von Loom geforderten Gradle Plugin API. Der v0.58-Fehler kam genau daher: Fabric Loom 1.17 wurde geladen, der Runner nutzte aber noch Gradle 8.14.3. v0.60 setzt den Workflow deshalb auf Gradle `9.5.0`.
 
 Wenn dieser Fehler erneut auftaucht, im Workflow prüfen, ob der Step **Set up Gradle** wirklich `gradle-version: 9.5.0` nutzt.
 
+### Build schlägt mit `GameVersion.getName()` oder `selectedSlot has private access` fehl
+
+Dieser Fehler wurde in v0.60 behoben. Der Client-Code nutzt jetzt eine feste Zielversion für das Event-Feld `minecraftVersion` und liest den Hotbar-Slot über einen sicheren Resolver statt über das private Feld.
+
 ### Build schlägt danach weiter fehl
 
-Dann ist der erste echte Java-/Fabric-Kompatibilitätstest erreicht. Die Ursache liegt meistens in:
+Dann ist der nächste Java-/Fabric-Kompatibilitätstest erreicht. Die Ursache liegt meistens in:
 
-- veränderten Yarn-Namen,
+- weiteren veränderten Yarn-Namen,
 - geänderten Fabric API Events,
 - einer nicht kompatiblen Fabric API Version,
 - oder Java-Code, der gegen 1.21.11 angepasst werden muss.

@@ -1,4 +1,4 @@
-# v0.59 Fabric Build Setup - Minecraft Java 1.21.11
+# v0.60 Fabric Build Setup - Minecraft Java 1.21.11
 
 ## Ziel
 
@@ -152,21 +152,30 @@ Er liest sichere Client-Zustände und sendet lokale Telemetrie an `127.0.0.1`.
 
 ## v0.59 Build-Fix
 
-Der erste GitHub-Actions-Fabric-Build ist nicht am Mod-Code gescheitert, sondern an der Gradle-/Loom-Kombination:
+Der erste GitHub-Actions-Fabric-Build scheiterte an der Gradle-/Loom-Kombination:
 
 ```text
-Fabric Loom 1.17.x → benötigt Gradle Plugin API 9.5.0
-Runner vorher → Gradle 8.14.3
+Fabric Loom 1.17.x -> benoetigt Gradle Plugin API 9.5.0
+Runner vorher -> Gradle 8.14.3
 ```
 
-v0.59 setzt GitHub Actions deshalb auf Gradle `9.5.0` und der Preflight prüft Gradle `9.5.0+`.
+v0.59 setzt GitHub Actions deshalb auf Gradle `9.5.0` und der Preflight prueft Gradle `9.5.0+`.
+
+## v0.60 Compile-Fix
+
+Der naechste Build erreichte den echten Java-Compile-Schritt. v0.60 behebt die Minecraft-1.21.11-API-Probleme:
+
+```text
+SharedConstants.getGameVersion().getName() -> feste Zielversion MINECRAFT_VERSION
+inventory.selectedSlot -> sicherer Hotbar-Slot-Resolver ohne direkten Privatfeld-Zugriff
+```
 
 ## Nächster Schritt nach erfolgreichem Build
 
-v0.60 kann serverabhängige Erkennung ergänzen:
+v0.61 kann serverabhängige Erkennung ergänzen:
 
 ```text
 chat_message + scoreboard_update
-→ vorsichtige Fight-/Win-/Loss-Erkennung
-→ aktiver Daily-Quest-Fortschritt
+-> vorsichtige Fight-/Win-/Loss-Erkennung
+-> aktiver Daily-Quest-Fortschritt
 ```

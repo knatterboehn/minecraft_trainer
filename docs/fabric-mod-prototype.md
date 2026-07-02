@@ -1,4 +1,4 @@
-# v0.59 Fabric Mod Prototype
+# v0.60 Fabric Mod Prototype
 
 ## Ziel
 
@@ -72,3 +72,14 @@ npm run fabric:resolve -- --write
 npm run fabric:preflight
 npm run fabric:build
 ```
+
+## Minecraft 1.21.11 Compile Notes
+
+v0.60 avoids two API assumptions that failed in the first real GitHub Actions compile step:
+
+```text
+GameVersion.getName() is not available in the 1.21.11 target API.
+PlayerInventory.selectedSlot is private in the 1.21.11 target API.
+```
+
+The prototype now sends the pinned target version `1.21.11` and resolves the selected hotbar slot through a safe runtime getter check. If the getter is not available, the event still stays valid with `slot: -1` instead of breaking the mod build.
