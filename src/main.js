@@ -87,14 +87,17 @@ root.addEventListener('click', (event) => {
   if (action === 'fight-loss') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_LOSS, { source: 'manual' }));
   if (action === 'fight-training') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_TRAINING, { source: 'manual' }));
   if (action === 'fight-undo') dispatchEvent(createEvent(EVENT_TYPES.FIGHT_UNDO, { source: 'manual' }));
-  if (action === 'challenge-success') dispatchEvent(createEvent(EVENT_TYPES.CHALLENGE_SUCCESS, { source: 'manual' }));
+  if (action === 'challenge-success') {
+    const nextState = dispatchEvent(createEvent(EVENT_TYPES.CHALLENGE_SUCCESS, { source: 'manual' }));
+    if (nextState.todayTraining.activeSession?.challengeDone) showToast('🎉 Bonus freigeschaltet: +100 XP.');
+  }
   if (action === 'challenge-decrement') dispatchEvent(createEvent(EVENT_TYPES.CHALLENGE_DECREMENT, { source: 'manual' }));
   if (action === 'set-issue') dispatchEvent(createEvent(EVENT_TYPES.REVIEW_SET, { issue: actionButton.dataset.issue, source: 'manual' }));
   if (action === 'finish-quest') {
     const notes = root.querySelector('[data-input="notes"]')?.value || '';
     dispatchEvent(createEvent(EVENT_TYPES.NOTES_SET, { notes, source: 'manual' }));
     dispatchEvent(createEvent(EVENT_TYPES.QUEST_FINISHED, { source: 'manual' }));
-    showToast('Quest gespeichert.');
+    showToast('✅ Quest abgeschlossen. XP gespeichert.');
   }
   if (action === 'export-data') {
     download('minecraft-trainer-export.json', exportApp());

@@ -6,7 +6,7 @@ export function deriveAnalysis(history = []) {
     return {
       strengths: [],
       reviewZones: [],
-      nextFocus: 'Starte deine erste Daily Quest.'
+      nextFocus: '🎯 Starte deine erste Daily Quest.'
     };
   }
 
@@ -49,7 +49,7 @@ export function deriveAnalysis(history = []) {
     .map((item) => `${item.skill}: ${item.winrate}% Winrate. Nächste Quest einfacher und fokussierter spielen.`);
 
   const topIssue = Array.from(issues.entries()).sort((a, b) => b[1] - a[1])[0];
-  let nextFocus = 'Spiele die nächste Quest mit einem klaren Fokus.';
+  let nextFocus = '🧠 Spiele die nächste Quest mit einem klaren Fokus.';
   if (topIssue) {
     nextFocus = `${topIssue[0]} taucht am häufigsten auf. Nächste Quest nur darauf achten.`;
   } else if (reviewZones.length > 0) {

@@ -3,13 +3,24 @@ import { createDefaultApp, STORAGE_KEY } from '../src/state/defaults.js';
 import { createEvent, EVENT_TYPES, applyGameEvent } from '../src/domain/gameEvents.js';
 import { recomputeProgress } from '../src/domain/progress.js';
 import { deriveAnalysis } from '../src/domain/analysis.js';
+import { getDailyQuestState, getLatestTodayQuest, getStreakMessage } from '../src/domain/questStatus.js';
+import { renderApp } from '../src/ui/render.js';
+
+global.document = { body: { dataset: {} } };
 
 const app = createDefaultApp();
 assert.equal(STORAGE_KEY, 'minecraftTrainerApp');
 assert.equal(app.history.length, 0);
+app.user.name = 'Vince';
+app.ui.screen = 'dashboard';
+assert.equal(getDailyQuestState(app), 'open');
+assert.match(renderApp(app), /Quest starten/);
 
 applyGameEvent(app, createEvent(EVENT_TYPES.QUEST_STARTED));
 assert.ok(app.todayTraining.activeSession);
+assert.equal(getDailyQuestState(app), 'active');
+app.ui.screen = 'training';
+assert.match(renderApp(app), /Fight Log/);
 
 applyGameEvent(app, createEvent(EVENT_TYPES.FIGHT_WIN));
 applyGameEvent(app, createEvent(EVENT_TYPES.FIGHT_WIN));
@@ -31,6 +42,9 @@ assert.equal(saved.trainingFights, 1);
 assert.equal(saved.challengeDone, true);
 assert.equal(saved.mainIssue, 'Positioning');
 assert.equal(saved.xp, 320);
+assert.equal(getDailyQuestState(app), 'completed');
+assert.equal(getLatestTodayQuest(app).id, saved.id);
+assert.match(getStreakMessage(app), /Streak gesichert/);
 
 recomputeProgress(app);
 assert.equal(app.progress.fights, 4);
@@ -41,5 +55,13 @@ assert.equal(app.progress.xp, 320);
 
 const analysis = deriveAnalysis(app.history);
 assert.match(analysis.nextFocus, /Positioning/);
+app.analysis = analysis;
 
-console.log('Smoke test passed: Daily Quest, Fight Log, Bonus Challenge and Progress are consistent.');
+app.ui.screen = 'dashboard';
+assert.match(renderApp(app), /Heute erledigt/);
+app.ui.screen = 'progress';
+assert.match(renderApp(app), /Quest-Verlauf/);
+app.ui.screen = 'analysis';
+assert.match(renderApp(app), /Nächster Fokus/);
+
+console.log('Smoke test passed: Quest completion, gamification loop and Progress UI are consistent.');

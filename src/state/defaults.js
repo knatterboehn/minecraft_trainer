@@ -1,6 +1,6 @@
 import { createDailyQuest } from '../domain/quest.js';
 
-export const APP_VERSION = '0.48';
+export const APP_VERSION = '0.49';
 export const STORAGE_KEY = 'minecraftTrainerApp';
 
 export const SKILLS = ['Sword PvP', 'Bow', 'Mace', 'UHC', 'Bedwars', 'Allround'];

@@ -1,13 +1,21 @@
 import { statCard } from '../components/statCard.js';
 import { calculateXpBreakdown, getWinrate } from '../../domain/progress.js';
+import { getStreakMessage } from '../../domain/questStatus.js';
 import { escapeHtml } from '../html.js';
 import { art } from '../assets.js';
 
-const issues = ['Aim', 'Movement', 'Positioning', 'Decision', 'Panic', 'Weiß nicht'];
+const issues = [
+  { value: 'Aim', label: '🎯 Aim' },
+  { value: 'Movement', label: '🏃 Movement' },
+  { value: 'Positioning', label: '👀 Positioning' },
+  { value: 'Decision', label: '🧠 Decision' },
+  { value: 'Panic', label: '⚠️ Panic' },
+  { value: 'Weiß nicht', label: '❔ Weiß nicht' }
+];
 
 function renderIssueButtons(activeIssue) {
   return issues.map((issue) => `
-    <button type="button" class="btn issue-option ${issue === activeIssue ? 'active' : ''}" data-action="set-issue" data-issue="${escapeHtml(issue)}">${escapeHtml(issue)}</button>
+    <button type="button" class="btn issue-option ${issue.value === activeIssue ? 'active' : ''}" data-action="set-issue" data-issue="${escapeHtml(issue.value)}">${escapeHtml(issue.label)}</button>
   `).join('');
 }
 
@@ -18,28 +26,32 @@ function renderSummary(state) {
   const focus = entry.mainIssue && entry.mainIssue !== 'Weiß nicht'
     ? `${entry.mainIssue}: nächste Quest nur darauf achten.`
     : 'Nächste Quest mit einem klaren Fokus spielen.';
+  const bonusText = entry.challengeDone ? '🎉 Bonus Challenge geschafft.' : '✨ Bonus Challenge blieb offen.';
+  const streakText = entry.streakBonus ? '🔥 Streak gesichert.' : '🔥 Extra-Quest gespeichert.';
+
   return `
     <section class="hero">
       <div class="hero-content">
-        <p class="eyebrow">Quest abgeschlossen</p>
-        <h2>+${escapeHtml(entry.xp)} XP gesammelt.</h2>
-        <p>${escapeHtml(`${entry.fights} Fights · ${entry.wins} Wins · ${entry.losses} Losses · ${winrate}% Winrate`)}</p>
+        <p class="eyebrow">✅ Quest abgeschlossen</p>
+        <h2>🎉 +${escapeHtml(entry.xp)} XP gesammelt.</h2>
+        <p>${escapeHtml(`${entry.fights} Fights · ${entry.wins} Wins · ${entry.losses} Losses · ${winrate}% Winrate`)} ${escapeHtml(streakText)}</p>
         <div class="hero-actions">
-          <button class="btn primary" type="button" data-action="clear-summary" data-screen="dashboard">Zurück zum Dashboard</button>
-          <button class="btn" type="button" data-screen="progress">Fortschritt ansehen</button>
+          <button class="btn primary" type="button" data-action="clear-summary" data-screen="dashboard">Zum Dashboard</button>
+          <button class="btn" type="button" data-screen="progress">Quest-Verlauf ansehen</button>
         </div>
       </div>
       <aside class="hero-panel">
         <div class="hero-panel-top">
           <div>
-            <p class="eyebrow">Nächster Fokus</p>
+            <p class="eyebrow">🧠 Nächster Fokus</p>
             <h3>${escapeHtml(focus)}</h3>
-            <p>${entry.challengeDone ? 'Bonus Challenge geschafft.' : 'Bonus Challenge blieb offen.'}</p>
+            <p>${escapeHtml(bonusText)} ${escapeHtml(getStreakMessage(state))}</p>
           </div>
           <div class="panel-art large" aria-hidden="true">${art(entry.challengeDone ? 'reward' : 'focus')}</div>
         </div>
         <div class="tag-row">
-          <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? 'Bonus erledigt' : 'Bonus offen'}</span>
+          <span class="tag good">✅ Quest erledigt</span>
+          <span class="tag ${entry.challengeDone ? 'good' : 'warn'}">${entry.challengeDone ? '💎 Bonus freigeschaltet' : '✨ Bonus offen'}</span>
           <span class="tag">${escapeHtml(entry.mainIssue || 'Weiß nicht')}</span>
         </div>
       </aside>
@@ -58,7 +70,7 @@ export function renderTraining(state) {
       <div class="screen">
         <section class="section-head">
           <div>
-            <p class="eyebrow">Training · Daily Quest</p>
+            <p class="eyebrow">🎯 Daily Quest</p>
             <h2>${escapeHtml(quest.title)}</h2>
             <p>${escapeHtml(`Server: ${quest.server}. Fokus: ${quest.focus}`)}</p>
           </div>
@@ -85,7 +97,7 @@ export function renderTraining(state) {
             </div>
             <div class="notice with-art mt-4">
               <div class="state-art" aria-hidden="true">${art('torch')}</div>
-              <div><strong>Bonus Challenge:</strong><br>${escapeHtml(quest.challenge.label)}<span class="notice-note">Ziel: ${escapeHtml(quest.challenge.target)} Erfolge · +100 XP Bonus</span></div>
+              <div><strong>✨ Bonus Challenge:</strong><br>${escapeHtml(quest.challenge.label)}<span class="notice-note">Ziel: ${escapeHtml(quest.challenge.target)} Erfolge · 💎 +100 XP Bonus</span></div>
             </div>
           </div>
 
@@ -115,33 +127,35 @@ export function renderTraining(state) {
   const preview = calculateXpBreakdown({ ...session, streakBonus: true });
   const challengePercent = Math.min(100, Math.round((session.challengeProgress / session.challengeTarget) * 100));
   const fightPercent = Math.min(100, Math.round((session.fights / session.targetFights) * 100));
+  const targetReached = session.fights >= session.targetFights;
+  const bonusState = session.challengeDone ? '🎉 Bonus freigeschaltet · +100 XP' : `✨ Bonus offen · ${session.challengeProgress} / ${session.challengeTarget}`;
 
   return `
     <div class="screen">
       <section class="section-head">
         <div>
-          <p class="eyebrow">Training läuft</p>
+          <p class="eyebrow">⚔️ Quest läuft</p>
           <h2>${escapeHtml(session.skill)} Quest</h2>
           <p>${escapeHtml(session.focus)}</p>
         </div>
-        <span class="tag accent">XP-Vorschau +${escapeHtml(preview.total)}</span>
+        <span class="tag accent">⭐ XP-Vorschau +${escapeHtml(preview.total)}</span>
       </section>
 
       <section class="split">
         <div class="card">
           <div class="section-head">
             <div>
-              <p class="eyebrow">Fight Log</p>
+              <p class="eyebrow">⚔️ Fight Log</p>
               <h3>Nach jedem Fight ein Klick.</h3>
               <p>Logge nur, was wirklich passiert ist. Schnell, ohne aus Minecraft rauszufallen.</p>
             </div>
-            <span class="tag accent">${escapeHtml(`${session.fights} / ${session.targetFights}`)}</span>
+            <span class="tag ${targetReached ? 'good' : 'accent'}">${escapeHtml(`${session.fights} / ${session.targetFights}`)}</span>
           </div>
           <div class="progress-track mt-4" aria-label="Fight-Fortschritt"><div class="progress-fill" style="width:${fightPercent}%"></div></div>
           <section class="grid grid-3 mt-5">
-            ${statCard('Wins', session.wins, '+30 XP je Win', 'reward')}
-            ${statCard('Losses', session.losses, '+10 XP je Loss', 'creeper')}
-            ${statCard('Training', session.trainingFights, 'zählt nicht zur Winrate', 'ghast')}
+            ${statCard('🏆 Wins', session.wins, '+30 XP je Win', 'reward')}
+            ${statCard('💀 Losses', session.losses, '+10 XP je Loss', 'creeper')}
+            ${statCard('🧱 Training', session.trainingFights, 'zählt nicht zur Winrate', 'ghast')}
           </section>
           <div class="hero-actions mt-4">
             <button class="btn primary" type="button" data-action="fight-win">+ Win</button>
@@ -150,9 +164,9 @@ export function renderTraining(state) {
             <button class="btn ghost" type="button" data-action="fight-undo" ${session.fights <= 0 ? 'disabled' : ''}>Undo</button>
           </div>
 
-          <div class="notice with-art mt-4">
+          <div class="notice with-art mt-4 ${session.challengeDone ? 'success-state' : ''}">
             <div class="state-art" aria-hidden="true">${art(session.challengeDone ? 'diamonds' : 'torch')}</div>
-            <div><strong>Bonus Challenge:</strong><br>${escapeHtml(session.challengeLabel)}<span class="notice-note">${escapeHtml(session.challengeProgress)} / ${escapeHtml(session.challengeTarget)} Erfolge</span></div>
+            <div><strong>${escapeHtml(bonusState)}</strong><br>${escapeHtml(session.challengeLabel)}<span class="notice-note">${escapeHtml(session.challengeProgress)} / ${escapeHtml(session.challengeTarget)} Erfolge</span></div>
           </div>
           <div class="progress-track mt-3" aria-label="Bonus-Fortschritt"><div class="progress-fill" style="width:${challengePercent}%"></div></div>
           <div class="hero-actions mt-4">
@@ -167,12 +181,13 @@ export function renderTraining(state) {
             <div class="timer-time">${escapeHtml(session.fights)}</div>
             <p>${escapeHtml(`von ${session.targetFights} Fights`)}</p>
             <div class="timer-controls">
-              <span class="tag ${session.challengeDone ? 'good' : 'warn'}">${session.challengeDone ? 'Bonus geschafft' : 'Bonus offen'}</span>
+              <span class="tag ${targetReached ? 'good' : 'warn'}">${targetReached ? '✅ Ziel erreicht' : '🎯 Ziel offen'}</span>
+              <span class="tag ${session.challengeDone ? 'good' : 'warn'}">${session.challengeDone ? '💎 Bonus geschafft' : '✨ Bonus offen'}</span>
             </div>
           </div>
 
           <form class="card" data-form="quest-review">
-            <p class="eyebrow">Kurz-Review</p>
+            <p class="eyebrow">🧠 Kurz-Review</p>
             <h3>Was war am schwersten?</h3>
             <p>Ein Klick reicht. Kein langer Report.</p>
             <div class="issue-grid mt-4">${renderIssueButtons(session.mainIssue)}</div>
@@ -181,7 +196,7 @@ export function renderTraining(state) {
               <textarea id="questNotes" data-input="notes" maxlength="500" placeholder="z. B. zweimal zu früh committed">${escapeHtml(session.notes)}</textarea>
             </div>
             <div class="form-actions">
-              <button class="btn primary" type="button" data-action="finish-quest" ${session.fights <= 0 ? 'disabled' : ''}>Quest abschließen</button>
+              <button class="btn primary" type="button" data-action="finish-quest" ${session.fights <= 0 ? 'disabled' : ''}>✅ Quest abschließen</button>
             </div>
           </form>
         </aside>
