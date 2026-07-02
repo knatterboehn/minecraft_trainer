@@ -1,15 +1,14 @@
-# v0.57 GitHub Actions Build
+# v0.58 GitHub Actions Build
 
 ## Ziel
 
-BlockCoach soll nicht nur lokal, sondern auch automatisch in GitHub gebaut werden. Dadurch kann die Fabric-Mod später als `.jar` aus einem Workflow-Artefakt oder einem GitHub Release verteilt werden.
+BlockCoach soll automatisch in GitHub getestet und als Fabric-Mod gebaut werden. v0.58 trennt die Pipeline bewusst in drei Jobs, damit Fehler im GitHub-UI nicht mehr als unklarer Sammelfehler erscheinen.
 
 ```text
 Push nach main
-→ Web-App Tests
-→ Fabric-Versionen auflösen
-→ Preflight
-→ Gradle Build
+→ Web app checks
+→ Browser E2E checks
+→ Fabric client JAR
 → .jar als GitHub Actions Artifact
 ```
 
@@ -33,7 +32,7 @@ Der Workflow läuft bei:
 npm run ci:web
 ```
 
-Das prüft:
+Das prüft ohne Browser-Abhängigkeit:
 
 - JavaScript-Syntax
 - Smoke Test
@@ -43,9 +42,39 @@ Das prüft:
 - Fabric Prototype Structure
 - Release Preparation
 - GitHub Actions Workflow
-- E2E User Flow
 
-### 2. Fabric client JAR
+Der Browser-E2E-Test läuft absichtlich nicht mehr in diesem Job. Dadurch ist sofort sichtbar, ob ein Fehler aus der App-Logik oder aus der Browser-Umgebung kommt.
+
+### 2. Browser E2E checks
+
+```zsh
+npm run ci:e2e
+```
+
+Das prüft den echten Nutzerfluss im Headless-Browser:
+
+- Onboarding
+- Daily Quest starten
+- Bridge-Event empfangen
+- manuelle Fights klicken
+- Bonus Challenge abschließen
+- Quest abschließen
+- Fortschritt, Analyse und Profil öffnen
+- mobile Navigation
+
+Der Job zeigt vorher die Browser-Umgebung an und nutzt:
+
+```text
+E2E_CHROME_PATH=/usr/bin/google-chrome-stable
+```
+
+Zusätzlich werden die E2E-Screenshots als Artifact hochgeladen:
+
+```text
+blockcoach-e2e-screens
+```
+
+### 3. Fabric client JAR
 
 ```zsh
 npm run fabric:resolve
@@ -63,12 +92,14 @@ Der Job nutzt:
 - Fabric Loader
 - Fabric API
 
+Der Fabric-Build startet erst, wenn Web-App-Checks und Browser-E2E grün sind.
+
 ## Ergebnis
 
 Nach erfolgreichem Build wird hochgeladen:
 
 ```text
-blockcoach-client-0.57.0-minecraft-1.21.11
+blockcoach-client-0.58.0-minecraft-1.21.11
 ```
 
 Der eigentliche `.jar` liegt im Artifact aus:
@@ -80,12 +111,12 @@ fabric-mod/blockcoach-client/build/libs/*.jar
 Der erwartete spätere Dateiname ist:
 
 ```text
-blockcoach-client-0.57.0+1.21.11.jar
+blockcoach-client-0.58.0+1.21.11.jar
 ```
 
 ## Warum noch kein automatischer GitHub Release?
 
-v0.57 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
+v0.58 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub Release sollte erst erstellt werden, wenn:
 
 1. der Workflow erfolgreich durchläuft,
 2. das `.jar` lokal in Minecraft 1.21.11 startet,
@@ -98,9 +129,21 @@ v0.57 baut bewusst erstmal nur ein Workflow-Artefakt. Ein öffentlicher GitHub R
 2. Tab **Actions** öffnen.
 3. Workflow **BlockCoach Fabric Build** wählen.
 4. Entweder auf einen Push warten oder **Run workflow** klicken.
-5. Nach erfolgreichem Lauf das Artifact herunterladen.
+5. Bei Fehlern den betroffenen Job öffnen:
+   - **Web app checks** = App-/Node-Testproblem
+   - **Browser E2E checks** = Headless-Chrome-/UI-Testproblem
+   - **Fabric client JAR** = Fabric-/Gradle-/Mod-Buildproblem
+6. Nach erfolgreichem Lauf das `.jar`-Artifact herunterladen.
 
 ## Troubleshooting
+
+### Web app checks schlagen fehl
+
+Dann liegt der Fehler nicht im Browser, sondern in Syntax, Domain-Logik, Bridge-Tests, Release-Dokumenten oder Workflow-Konsistenz. Den Schritt **Run web checks and core tests** öffnen und die erste Fehlermeldung kopieren.
+
+### Browser E2E checks schlagen fehl
+
+Den Schritt **Show browser environment** und danach **Run browser E2E test** öffnen. Screenshots werden zusätzlich als `blockcoach-e2e-screens` hochgeladen.
 
 ### Fabric Resolver schlägt fehl
 
