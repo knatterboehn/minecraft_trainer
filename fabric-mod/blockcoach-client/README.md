@@ -1,6 +1,6 @@
 # BlockCoach Fabric Client Prototype
 
-This is the first Java Edition client-mod prototype for BlockCoach.
+This is the first Java Edition client-mod prototype for BlockCoach, targeted at Minecraft Java 1.21.11.
 
 It is intentionally small and safe:
 
@@ -33,4 +33,6 @@ Then run Minecraft with Fabric in a development environment. The prototype sends
 
 ## Version note
 
-The Gradle properties use a Fabric example configuration for Minecraft `1.21`. Before building for Vince, update `gradle.properties` to his exact Minecraft Java version.
+Target Minecraft version: `1.21.11`.
+
+`gradle.properties` is pinned to `minecraft_version=1.21.11`. Before the first real Gradle build, update `fabric_api_version` to the official Fabric API artifact for Minecraft `1.21.11`. Then run `npm run fabric:preflight` from the project root.

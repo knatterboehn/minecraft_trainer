@@ -116,7 +116,7 @@ try {
   await sleep(100);
   assert.ok(ws.readMessages().some((event) => event.type === 'bridge_status'));
 
-  await postEvent({ type: 'minecraft_connected', playerName: 'Vince', minecraftVersion: '1.21' });
+  await postEvent({ type: 'minecraft_connected', playerName: 'Vince', minecraftVersion: '1.21.11' });
   await postEvent({ type: 'server_joined', server: 'PvPClub' });
   await postEvent({ type: 'fight_result', result: 'win' });
   await sleep(150);

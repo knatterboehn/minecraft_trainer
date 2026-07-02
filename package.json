@@ -1,6 +1,6 @@
 {
   "name": "blockcoach",
-  "version": "0.53.0",
+  "version": "0.54.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,8 @@
     "bridge": "node tools/local-bridge/server.mjs",
     "bridge:emit": "node tools/local-bridge/emit.mjs",
     "test:local-bridge": "node scripts/local-bridge-test.mjs",
-    "test:fabric": "node scripts/fabric-prototype-test.mjs"
+    "test:fabric": "node scripts/fabric-prototype-test.mjs",
+    "fabric:preflight": "node scripts/fabric-build-preflight.mjs",
+    "fabric:build": "cd fabric-mod/blockcoach-client && gradle build"
   }
 }

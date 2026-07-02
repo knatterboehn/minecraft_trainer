@@ -35,7 +35,7 @@ const app = createDefaultApp();
 app.user.name = 'Vince';
 app.ui.screen = 'dashboard';
 
-let mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.MINECRAFT_CONNECTED, playerName: 'Vince', minecraftVersion: '1.21.1' });
+let mapped = ingestBridgeEvent(app, { type: BRIDGE_EVENT_TYPES.MINECRAFT_CONNECTED, playerName: 'Vince', minecraftVersion: '1.21.11' });
 assert.equal(mapped.length, 0);
 assert.equal(app.integrations.minecraftBridge.status, BRIDGE_STATUS.MINECRAFT_CONNECTED);
 assert.equal(app.integrations.minecraftBridge.playerName, 'Vince');

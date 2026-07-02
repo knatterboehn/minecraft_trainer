@@ -1,7 +1,7 @@
 const DEFAULT_URL = process.env.BLOCKCOACH_BRIDGE_HTTP || 'http://127.0.0.1:4317/events';
 
 function parseArgs(argv) {
-  const event = { type: 'minecraft_connected', playerName: 'Vince', minecraftVersion: '1.21' };
+  const event = { type: 'minecraft_connected', playerName: 'Vince', minecraftVersion: '1.21.11' };
   let url = DEFAULT_URL;
 
   for (let i = 0; i < argv.length; i += 1) {

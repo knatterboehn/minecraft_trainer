@@ -385,7 +385,7 @@ async function run() {
     await waitForText(client, '⚔️ Fight Log', 'Fight Log sichtbar');
     await assertBodyHas(client, ['Quest läuft', 'Nach jedem Fight ein Klick.', 'Bonus offen', 'Quest abschließen'], 'Training aktiv');
 
-    await evalJs(client, `window.BlockCoachBridge.receive({ type: 'minecraft_connected', playerName: 'Vince E2E', minecraftVersion: '1.21.1' });`);
+    await evalJs(client, `window.BlockCoachBridge.receive({ type: 'minecraft_connected', playerName: 'Vince E2E', minecraftVersion: '1.21.11' });`);
     await evalJs(client, `window.BlockCoachBridge.receive({ type: 'server_joined', server: 'PvPClub' });`);
     await evalJs(client, `window.BlockCoachBridge.receive({ type: 'fight_result', result: 'win' });`);
     await waitForCondition(client, `JSON.parse(localStorage.getItem(${JSON.stringify(STORAGE_KEY)})).todayTraining.activeSession.fights === 1`, 'Bridge Win übernommen');

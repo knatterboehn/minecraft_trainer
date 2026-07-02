@@ -171,7 +171,7 @@ const server = createServer(async (request, response) => {
   }
 
   if (request.method === 'GET' && (parsed.pathname === '/health' || parsed.pathname === '/status')) {
-    sendJson(response, 200, { ok: true, service: 'blockcoach-local-bridge', version: '0.53', ...stats, clients: clients.size });
+    sendJson(response, 200, { ok: true, service: 'blockcoach-local-bridge', version: '0.54', ...stats, clients: clients.size });
     return;
   }
 

@@ -72,3 +72,15 @@ Minecraft Java
 ```
 
 Die Live-Integration ist bewusst assistiv: Der Spieler bekommt nach und rund um Fights besseres Feedback, aber keinen unfairen Vorteil im Fight.
+
+## v0.54 Build Flow
+
+Zielversion für den ersten Fabric-Start ist `Minecraft Java 1.21.11`. Der Spielerflow bleibt unverändert: Daily Quest, Fight Log, Bonus Challenge und Abschlussmoment bleiben der Kern. Die Mod-Integration dient nur dazu, echte Events automatisch in denselben Flow zu bringen.
+
+```text
+Bridge starten
+→ Minecraft 1.21.11 mit Fabric-Prototyp öffnen
+→ BlockCoach empfängt minecraft_connected/server_joined
+→ aktive Quest übernimmt sichere Events
+→ Gamification bleibt der Abschlussmoment
+```

@@ -1,4 +1,4 @@
-# v0.53 Fabric Mod Prototype
+# v0.54 Fabric Mod Prototype
 
 ## Goal
 
@@ -59,4 +59,6 @@ Override endpoint for development:
 
 ## Version note
 
-`gradle.properties` currently uses a Fabric example setup for Minecraft `1.21`. Before the first real build, update it to Vince's exact Minecraft Java version.
+Target version: `Minecraft Java 1.21.11`.
+
+`gradle.properties` is pinned to `minecraft_version=1.21.11`. The remaining open build value is `fabric_api_version`: update it to an official Fabric API artifact for `1.21.11` before running a real Gradle build. Use `npm run fabric:preflight` to catch this before build time.

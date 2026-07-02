@@ -1,7 +1,7 @@
 import { createDailyQuest } from '../domain/quest.js';
 import { createDefaultBridgeState } from '../integrations/minecraftBridgeAdapter.js';
 
-export const APP_VERSION = '0.53';
+export const APP_VERSION = '0.54';
 export const STORAGE_KEY = 'minecraftTrainerApp';
 
 export const SKILLS = ['Sword PvP', 'Bow', 'Mace', 'UHC', 'Bedwars', 'Allround'];

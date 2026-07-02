@@ -3,6 +3,10 @@
 **Contract:** `blockcoach.bridge.v1`  
 **Target:** Minecraft Java Edition + Fabric Client Mod + Local Bridge + BlockCoach Web-App
 
+## Target Minecraft version
+
+First Java target: `Minecraft Java 1.21.11`. Bridge events may still include other versions later, but the first Fabric prototype is pinned to Vince's target version.
+
 ## Purpose
 
 The web app cannot read Minecraft directly. The Fabric mod sends safe client-side gameplay events to a local bridge. The bridge forwards them to the web app. The app must never pretend to be live-connected without receiving bridge events.
@@ -61,7 +65,7 @@ This API is an input channel for local tests. It does not create fake live data 
 
 ```json
 { "type": "bridge_status", "status": "bridge_detected" }
-{ "type": "minecraft_connected", "playerName": "Vince", "minecraftVersion": "1.21" }
+{ "type": "minecraft_connected", "playerName": "Vince", "minecraftVersion": "1.21.11" }
 { "type": "server_joined", "server": "PvPClub" }
 ```
 

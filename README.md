@@ -4,7 +4,7 @@
 
 BlockCoach ist ein gamifizierter Minecraft-Java-Coach: Daily Quests, XP, Streaks, Bonus Challenges und ein Live-Integrationspfad für echte Gameplay-Daten.
 
-**Version 0.53** ergänzt die erste echte lokale Integrationskette: Web-App → Local Bridge → Fabric Client Prototype.
+**Version 0.54** richtet den Fabric-Prototyp auf Minecraft Java `1.21.11` aus und ergänzt einen lokalen Build-/Startpfad für die erste Mod-Verbindung.
 
 ## Produktprinzip
 
@@ -45,7 +45,7 @@ Daily Quest sehen
 → XP, Streak und Quest-Verlauf sehen
 ```
 
-## Live Integration v0.53
+## Live Integration v0.54
 
 Zielarchitektur:
 
@@ -58,7 +58,7 @@ Minecraft Java Edition
 → GameEvents + Gamification
 ```
 
-Neu in v0.53:
+Bereits vorhanden seit v0.53:
 
 - `tools/local-bridge/server.mjs`
 - `tools/local-bridge/emit.mjs`
@@ -95,7 +95,35 @@ Der Prototype liegt hier:
 fabric-mod/blockcoach-client/
 ```
 
-Wichtig: `gradle.properties` nutzt aktuell eine Fabric-Beispielkonfiguration für Minecraft `1.21`. Vor einem echten Build muss die exakte Minecraft-Version von Vince eingetragen werden.
+Zielversion für den Fabric-Prototyp ist jetzt Minecraft Java `1.21.11`. Die Datei `gradle.properties` ist auf `minecraft_version=1.21.11` gesetzt. Der exakte `fabric_api_version`-Wert muss vor einem echten Gradle-Build auf ein offizielles Fabric-API-Artefakt für `1.21.11` aktualisiert werden.
+
+
+## Fabric Build Setup für 1.21.11
+
+Die lokale Mod-Strecke ist vorbereitet für:
+
+```text
+Minecraft Java 1.21.11
+Fabric Client Mod
+Local Bridge localhost:4317
+BlockCoach Web-App
+```
+
+Preflight prüfen:
+
+```zsh
+npm run fabric:preflight
+```
+
+Der Preflight stoppt bewusst, wenn `fabric_api_version` noch nicht auf ein offizielles Fabric-API-Artefakt für `1.21.11` gesetzt wurde. Dadurch bauen wir nicht versehentlich gegen eine falsche Minecraft-Version.
+
+Build nach erfolgreichem Preflight:
+
+```zsh
+npm run fabric:build
+```
+
+Details: `docs/fabric-build-1.21.11.md`.
 
 ## Daten
 
@@ -155,4 +183,4 @@ npm run test:fabric
 - Fabric-Prototyp-Strukturtest
 - Browser-E2E mit echten Klicks
 
-Siehe `docs/test-report-v053.md`.
+Siehe `docs/test-report-v054.md`.
